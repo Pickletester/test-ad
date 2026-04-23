@@ -8,7 +8,6 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  /* ── HIDE until ready to prevent pop-in flash ── */
   body {
     background: #0a0a0a;
     display: flex;
@@ -16,10 +15,22 @@
     justify-content: center;
     min-height: 100vh;
     font-family: 'Barlow Condensed', sans-serif;
-    opacity: 0;
-    transition: opacity 0.25s ease;
+    /* No opacity hide — layout shows immediately */
   }
-  body.ready { opacity: 1; }
+
+  /* Video starts invisible, fades in once loaded */
+  .burger-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
+    display: block;
+    filter: brightness(0.82) contrast(1.18) saturate(1.15);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .burger-img.video-ready { opacity: 1; }
 
   .ad {
     width: 800px;
@@ -189,27 +200,6 @@
     position: relative;
     overflow: hidden;
     background: #080000;
-  }
-
-  /* ── VIDEO — Cast icon suppression ──
-     disableRemotePlayback is set in HTML.
-     This extra layer blocks the Cast button overlay
-     that Chrome renders on hover/focus over <video>. */
-  .video-wrap {
-    position: absolute;
-    inset: 0;
-    /* pointer-events on the wrapper still allows the page to receive events */
-  }
-
-  .burger-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 25%;
-    display: block;
-    filter: brightness(0.82) contrast(1.18) saturate(1.15);
-    /* Disable Chrome's built-in media overlay / Cast button */
-    pointer-events: none;
   }
 
   /* Invisible shield over video — also kills Cast hover target */
@@ -405,11 +395,7 @@
 
 <script>
   const vid = document.querySelector('video');
-  const R2_URL = vid.src; // capture before we blank it
-
-  function reveal() {
-    document.body.classList.add('ready');
-  }
+  const R2_URL = vid.src;
 
   // Disable remote playback via JS API
   if (vid.remote) {
@@ -417,36 +403,29 @@
     try { vid.disableRemotePlayback = true; } catch(e) {}
   }
 
-  // Fonts
-  const fontReady = document.fonts ? document.fonts.ready : Promise.resolve();
-
-  // Preload video into a blob URL so the browser has the full file in memory
-  // before we hand it to the <video> element — eliminates the stutter/black flash.
-  const videoReady = new Promise(resolve => {
-    fetch(R2_URL)
-      .then(r => r.blob())
-      .then(blob => {
-        const blobUrl = URL.createObjectURL(blob);
-        vid.src = blobUrl;
-        vid.load();
-        // Wait for first frame to be decoded and ready to paint
-        const onReady = () => resolve();
-        vid.addEventListener('canplaythrough', onReady, { once: true });
-        vid.addEventListener('loadeddata', onReady, { once: true });
-        vid.play().catch(() => {});
-        // Hard fallback — reveal after 1.5s no matter what
-        setTimeout(resolve, 1500);
-      })
-      .catch(() => {
-        // If fetch fails (e.g. offline), fall back to direct src
-        vid.src = R2_URL;
-        vid.load();
-        vid.addEventListener('loadeddata', resolve, { once: true });
-        setTimeout(resolve, 1500);
-      });
-  });
-
-  Promise.all([fontReady, videoReady]).then(reveal);
+  // Fonts load in background — no need to wait, layout is already visible
+  // Preload full video into a blob so playback is from memory (no stream stutter)
+  fetch(R2_URL)
+    .then(r => r.blob())
+    .then(blob => {
+      const blobUrl = URL.createObjectURL(blob);
+      vid.src = blobUrl;
+      vid.load();
+      const fadeIn = () => vid.classList.add('video-ready');
+      vid.addEventListener('canplaythrough', fadeIn, { once: true });
+      vid.addEventListener('loadeddata', fadeIn, { once: true });
+      vid.play().catch(() => {});
+      // Hard fallback — fade in after 1.5s no matter what
+      setTimeout(fadeIn, 1500);
+    })
+    .catch(() => {
+      // Fetch failed — fall back to direct streaming, fade in on first frame
+      vid.src = R2_URL;
+      vid.load();
+      const fadeIn = () => vid.classList.add('video-ready');
+      vid.addEventListener('loadeddata', fadeIn, { once: true });
+      setTimeout(fadeIn, 1500);
+    });
 </script>
 </body>
 </html>
