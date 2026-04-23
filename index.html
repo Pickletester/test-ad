@@ -404,32 +404,49 @@
 </div>
 
 <script>
-  // Wait for fonts + video first frame before revealing — eliminates pop-in flash
   const vid = document.querySelector('video');
+  const R2_URL = vid.src; // capture before we blank it
 
   function reveal() {
     document.body.classList.add('ready');
   }
 
+  // Disable remote playback via JS API
+  if (vid.remote) {
+    vid.remote.watchAvailability(() => {}).catch(() => {});
+    try { vid.disableRemotePlayback = true; } catch(e) {}
+  }
+
   // Fonts
   const fontReady = document.fonts ? document.fonts.ready : Promise.resolve();
 
-  // Video first frame (loadeddata fires once enough data exists to paint frame 1)
+  // Preload video into a blob URL so the browser has the full file in memory
+  // before we hand it to the <video> element — eliminates the stutter/black flash.
   const videoReady = new Promise(resolve => {
-    if (vid.readyState >= 2) { resolve(); return; }
-    vid.addEventListener('loadeddata', resolve, { once: true });
-    // Fallback: reveal after 300ms max even if video stalls
-    setTimeout(resolve, 300);
+    fetch(R2_URL)
+      .then(r => r.blob())
+      .then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        vid.src = blobUrl;
+        vid.load();
+        // Wait for first frame to be decoded and ready to paint
+        const onReady = () => resolve();
+        vid.addEventListener('canplaythrough', onReady, { once: true });
+        vid.addEventListener('loadeddata', onReady, { once: true });
+        vid.play().catch(() => {});
+        // Hard fallback — reveal after 1.5s no matter what
+        setTimeout(resolve, 1500);
+      })
+      .catch(() => {
+        // If fetch fails (e.g. offline), fall back to direct src
+        vid.src = R2_URL;
+        vid.load();
+        vid.addEventListener('loadeddata', resolve, { once: true });
+        setTimeout(resolve, 1500);
+      });
   });
 
   Promise.all([fontReady, videoReady]).then(reveal);
-
-  // Also disable remote playback via JS API for full browser support
-  if (vid.remote) {
-    vid.remote.watchAvailability(() => {}).catch(() => {});
-    // Disabling remote playback entirely
-    try { vid.disableRemotePlayback = true; } catch(e) {}
-  }
 </script>
 </body>
 </html>
