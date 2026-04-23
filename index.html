@@ -368,6 +368,7 @@
         class="burger-img"
         src="Gen-4_5 - burger in fire.gen-4_5 - burger in fire.mp4"
         autoplay loop muted playsinline
+        preload="auto"
         disableRemotePlayback
         x-webkit-airplay="deny"
         controlsList="noremoteplayback nofullscreen nodownload"
@@ -417,8 +418,8 @@
   const videoReady = new Promise(resolve => {
     if (vid.readyState >= 2) { resolve(); return; }
     vid.addEventListener('loadeddata', resolve, { once: true });
-    // Fallback: reveal after 800ms max even if video stalls
-    setTimeout(resolve, 800);
+    // Fallback: reveal after 300ms max even if video stalls
+    setTimeout(resolve, 300);
   });
 
   Promise.all([fontReady, videoReady]).then(reveal);
