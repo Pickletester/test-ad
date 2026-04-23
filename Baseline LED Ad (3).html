@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baseline Bar & Grille – LED Ad</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+
+  .ad {
+    width: 800px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    background: #000;
+  }
+
+  /* LED scanline */
+  .ad::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.10) 2px,
+      rgba(0,0,0,0.10) 3px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* ── MAIN ROW ── */
+  .main-row {
+    display: flex;
+    flex: 1;
+    height: 352px;
+  }
+
+  /* ── LEFT ── */
+  .left {
+    width: 360px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 24px 28px 24px 32px;
+    position: relative;
+    background: #000;
+    z-index: 2;
+  }
+
+  .left::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 10% 50%, rgba(220,30,30,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+
+
+  .brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 62px;
+    color: #fff;
+    line-height: 0.88;
+    letter-spacing: 2px;
+    text-shadow: 2px 3px 8px rgba(0,0,0,0.8);
+    margin-bottom: 12px;
+    white-space: nowrap;
+  }
+
+  .brand .amp {
+    color: #e02020;
+    text-shadow: 0 0 20px rgba(220,30,30,0.9), 0 0 50px rgba(220,30,30,0.4);
+  }
+
+  .divider {
+    width: 44px;
+    height: 3px;
+    background: #e02020;
+    box-shadow: 0 0 12px rgba(220,30,30,0.9), 0 0 28px rgba(220,30,30,0.5);
+    margin-bottom: 14px;
+    border-radius: 1px;
+  }
+
+  .tagline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 19px;
+    letter-spacing: 6px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 18px;
+  }
+
+  .info-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 18px;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #e02020;
+    box-shadow: 0 0 8px rgba(220,30,30,1);
+    flex-shrink: 0;
+  }
+
+  .info-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.80);
+    letter-spacing: 0.5px;
+  }
+
+  .info-text .muted {
+    color: rgba(255,255,255,0.36);
+    font-weight: 400;
+    font-size: 13px;
+  }
+
+  .hh-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(220,30,30,0.14);
+    border: 1px solid rgba(220,30,30,0.5);
+    border-radius: 5px;
+    padding: 12px 16px;
+    box-shadow: 0 0 18px rgba(220,30,30,0.18), inset 0 0 18px rgba(220,30,30,0.05);
+    white-space: nowrap;
+    flex-wrap: nowrap;
+    width: 100%;
+    box-sizing: border-box;
+    animation: none;
+  }
+
+  @keyframes hh-pulse {
+    0%, 100% { text-shadow: 0 0 10px rgba(255,220,30,0.6); }
+    50% { text-shadow: 0 0 22px rgba(255,220,30,1), 0 0 40px rgba(255,220,30,0.4); }
+  }
+
+  .hh-label { animation: hh-pulse 2.5s ease-in-out infinite; }
+
+  .hh-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 2px;
+    color: #ffe033;
+    text-shadow: 0 0 12px rgba(255,220,30,0.8);
+  }
+
+  .hh-sep { width: 1px; height: 18px; background: rgba(220,30,30,0.4); }
+
+  .hh-time {
+    font-size: 20px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px rgba(255,255,255,0.3);
+    font-family: 'Bebas Neue', sans-serif;
+  }
+
+  /* ── RIGHT IMAGE ── */
+  .right {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #080000;
+  }
+
+  .burger-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
+    display: block;
+    filter: brightness(0.82) contrast(1.18) saturate(1.15);
+  }
+
+  /* left blend fade */
+  .right::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #000 0%, rgba(0,0,0,0.55) 18%, rgba(0,0,0,0.15) 42%, transparent 65%);
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* bottom fade to black — seamless into ticker */
+  .ember {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 160px;
+    background: linear-gradient(0deg, #000 0%, rgba(0,0,0,0.7) 40%, transparent 100%);
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  /* ── OPEN TO THE PUBLIC badge — big, prominent ── */
+  .public-badge {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    transform: none;
+    z-index: 6;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .public-inner {
+    border: 3px solid rgba(220,30,30,0.85);
+    border-radius: 6px;
+    padding: 14px 20px;
+    background: rgba(0,0,0,0.72);
+    backdrop-filter: blur(4px);
+    box-shadow:
+      0 0 24px rgba(220,30,30,0.5),
+      0 0 60px rgba(220,30,30,0.2),
+      inset 0 0 20px rgba(220,30,30,0.08);
+    transform: rotate(-2deg);
+  }
+
+  .public-top {
+    font-size: 11px;
+    letter-spacing: 5px;
+    color: rgba(255,80,80,0.85);
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .public-main {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 34px;
+    letter-spacing: 3px;
+    color: #fff;
+    line-height: 1;
+    text-shadow:
+      0 0 16px rgba(255,50,50,0.7),
+      0 0 40px rgba(255,50,50,0.3);
+  }
+
+  .public-main .accent { color: #ffe033; text-shadow: 0 0 14px rgba(255,220,30,0.7), 0 0 30px rgba(255,220,30,0.35), 0 0 60px rgba(255,220,30,0.15); animation: public-pulse 2.5s ease-in-out infinite; }
+
+  @keyframes public-pulse {
+    0%, 100% { text-shadow: 0 0 14px rgba(255,220,30,0.7), 0 0 30px rgba(255,220,30,0.35); }
+    50% { text-shadow: 0 0 20px rgba(255,220,30,1), 0 0 50px rgba(255,220,30,0.5), 0 0 80px rgba(255,220,30,0.2); }
+  }
+
+  .public-sub {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    margin-top: 5px;
+  }
+
+  /* ── BOTTOM TICKER ── */
+  .ticker {
+    height: 48px;
+    background: #cc1a1a;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+  }
+
+  /* left label */
+  .ticker-tag {
+    flex-shrink: 0;
+    background: #111;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    border-right: 2px solid rgba(255,255,255,0.2);
+    z-index: 2;
+    width: 360px;
+  }
+
+  .ticker-tag span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1.5px;
+    color: #ffffff;
+    font-weight: 900;
+    text-shadow: 0 0 8px rgba(255,255,255,0.4);
+    white-space: nowrap;
+  }
+
+  .ticker-scroll {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .ticker-inner {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    animation: ticker-scroll 28s linear infinite;
+  }
+
+  .ticker-item {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 4px;
+    color: #fff;
+    font-weight: 900;
+    text-shadow: 0 0 12px rgba(255,255,255,0.4);
+    padding: 0 28px;
+    white-space: nowrap;
+  }
+
+  .ticker-sep {
+    color: rgba(255,255,255,0.7);
+    font-size: 16px;
+  }
+
+  @keyframes ticker-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+</style>
+</head>
+<body>
+
+<div class="ad">
+
+  <div class="main-row">
+
+    <!-- LEFT -->
+    <div class="left">
+      <div class="brand">BASELINE<br>BAR <span class="amp">&amp;</span> GRILLE</div>
+      <div class="divider"></div>
+      <div class="tagline" style="color:#e02020;text-shadow:0 0 16px rgba(220,30,30,0.6);letter-spacing:8px;text-align:left;padding-left:2px;">Eat. Drink. Connect.</div>
+      <div class="info-rows">
+        <div class="info-row" style="margin-top:2px; justify-content:center;">
+          <div style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:10px 20px 10px 14px;">
+            <span style="font-size:20px;letter-spacing:4px;color:#fff;text-transform:uppercase;font-weight:700;border-right:1px solid rgba(255,255,255,0.2);padding-right:16px;white-space:nowrap;">INSIDE</span>
+            <img src="uploads/Logo LevelUP.png" alt="LevelUp" style="height:38px;width:auto;object-fit:contain;">
+          </div>
+        </div>
+      </div>
+      <div class="hh-badge">
+        <div class="hh-label">Happy Hour</div>
+        <div class="hh-sep"></div>
+        <div class="hh-time">Tue – Fri &nbsp;·&nbsp; 4 – 6 PM</div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+      <video
+        class="burger-img"
+        src="uploads/Gen-4_5 - burger in fire.gen-4_5 - burger in fire.mp4"
+        autoplay loop muted playsinline
+      ></video>
+      <div class="ember"></div>
+
+      <!-- EVENTS tab floating above red bar -->
+      <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);background:#cc1a1a;padding:5px 20px;border-radius:4px 4px 0 0;z-index:8;white-space:nowrap;box-shadow:0 -4px 16px rgba(200,20,20,0.5);">
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:4px;color:#fff;">EVENTS</span>
+      </div>
+
+      <!-- OPEN TO THE PUBLIC — big & prominent -->
+      <div class="public-badge">
+        <div class="public-inner">
+            <div class="public-main">OPEN<br>TO THE<br><span class="accent">PUBLIC</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="ticker" style="position:relative;">
+    <div class="ticker-tag"><span>OPEN TUESDAY – SATURDAY &nbsp;·&nbsp; 11AM – 10PM</span></div>
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+      <span class="ticker-item" style="padding:0;font-size:22px;letter-spacing:2px;">BINGO NIGHT &nbsp;•&nbsp; TRIVIA NIGHT &nbsp;•&nbsp; SPORTS NIGHT</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
