@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ad Editor – Baseline BBG</title>
+<title>Lower Third Editor – Baseline BBG</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --red: #e02020;
-    --dark: #111;
     --card: #1a1a1a;
     --border: #2a2a2a;
     --text: #f0f0f0;
@@ -23,7 +22,7 @@
     color: var(--text);
     font-family: 'Segoe UI', system-ui, sans-serif;
     min-height: 100vh;
-    padding: 16px 14px 80px;
+    padding: 16px 14px 60px;
   }
 
   header {
@@ -44,7 +43,7 @@
   header h1 { font-size: 18px; font-weight: 700; color: #fff; }
   header p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-  /* ── GH token + Save row ── */
+  /* Token + save */
   .topbar {
     background: var(--card);
     border: 1px solid var(--border);
@@ -92,7 +91,19 @@
   .status.ok  { color: #4caf50; }
   .status.err { color: var(--red); }
 
-  /* ── Preview stage ── */
+  .help {
+    font-size: 11px;
+    color: #666;
+    padding: 10px 12px;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .help b { color: #aaa; }
+
+  /* Stage */
   .stage-wrap {
     margin-bottom: 14px;
     border-radius: 10px;
@@ -107,12 +118,7 @@
     color: var(--muted);
     padding: 7px 12px;
     text-transform: uppercase;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
   }
-  .stage-hint { color: #666; font-size: 10px; letter-spacing: 1px; text-transform: none; }
-
   .stage {
     width: 100%;
     aspect-ratio: 2 / 1;
@@ -122,61 +128,28 @@
     touch-action: none;
   }
 
-  /* The 800x400 ad — rendered at logical size and scaled with transform to fit */
+  /* Ad — same structure as the sign, scaled to fit */
   .ad {
     width: 800px;
     height: 400px;
     position: absolute;
     top: 0; left: 0;
     transform-origin: top left;
+    display: flex;
+    flex-direction: column;
     background: #000;
     font-family: 'Barlow Condensed', sans-serif;
+    overflow: hidden;
   }
 
-  .ad-bg {
+  #frameCanvas {
     position: absolute;
     inset: 0;
-    display: flex;
-  }
-  .ad-bg .left-panel {
-    width: 390px;
-    flex-shrink: 0;
-    background: #000;
-    position: relative;
-  }
-  .ad-bg .left-panel::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 10% 50%, rgba(220,30,30,0.10) 0%, transparent 70%);
-  }
-  .ad-bg .right-panel {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    background: #080000;
-  }
-  .ad-bg .right-panel::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(90deg, #000 0%, rgba(0,0,0,0.55) 18%, rgba(0,0,0,0.15) 42%, transparent 65%);
-    z-index: 2;
-    pointer-events: none;
-  }
-  .ad-bg .ember {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    height: 120px;
-    background: linear-gradient(0deg, #000 0%, rgba(0,0,0,0.7) 40%, transparent 100%);
-    z-index: 3;
-    pointer-events: none;
-  }
-  #frameCanvas {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
+    width: 100%;
+    height: 100%;
     display: block;
     filter: brightness(0.82) contrast(1.18) saturate(1.15);
   }
-
-  /* Scanline overlay */
   .ad::after {
     content: '';
     position: absolute; inset: 0;
@@ -187,26 +160,157 @@
     z-index: 100;
   }
 
-  /* Ticker bar */
-  .ticker-bar {
+  /* TOP PORTION — locked, identical to sign */
+  .main-row { display: flex; flex: 1; min-height: 0; }
+
+  .left {
+    width: 390px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    background: #000;
+    z-index: 2;
+  }
+  .left::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 10% 50%, rgba(220,30,30,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    color: #fff;
+    line-height: 0.88;
+    letter-spacing: 1px;
+    text-shadow: 2px 3px 8px rgba(0,0,0,0.8);
+    margin-bottom: 18px;
+    white-space: nowrap;
+    text-align: center;
+  }
+  .brand .amp {
+    color: #e02020;
+    text-shadow: 0 0 20px rgba(220,30,30,0.9), 0 0 50px rgba(220,30,30,0.4);
+  }
+  .inside-badge {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 12px 22px 12px 16px;
+  }
+  .inside-badge span {
+    font-size: 21px;
+    letter-spacing: 4px;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: 700;
+    border-right: 1px solid rgba(255,255,255,0.2);
+    padding-right: 16px;
+    white-space: nowrap;
+  }
+  .inside-badge img { height: 42px; width: auto; object-fit: contain; }
+
+  .right { flex: 1; position: relative; overflow: hidden; background: #080000; }
+  .right::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, #000 0%, rgba(0,0,0,0.55) 18%, rgba(0,0,0,0.15) 42%, transparent 65%);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .ember {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 120px;
+    background: linear-gradient(0deg, #000 0%, rgba(0,0,0,0.7) 40%, transparent 100%);
+    z-index: 3;
+    pointer-events: none;
+  }
+  .public-badge { position: absolute; top: 12px; right: 12px; z-index: 6; }
+  .public-inner {
+    border: 3px solid rgba(220,30,30,0.85);
+    border-radius: 6px;
+    padding: 12px 18px;
+    background: rgba(0,0,0,0.72);
+    box-shadow: 0 0 24px rgba(220,30,30,0.5), 0 0 60px rgba(220,30,30,0.2), inset 0 0 20px rgba(220,30,30,0.08);
+    transform: rotate(-2deg);
+    text-align: center;
+  }
+  .public-main {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 3px;
+    color: #fff;
+    line-height: 1;
+    text-shadow: 0 0 16px rgba(255,50,50,0.7), 0 0 40px rgba(255,50,50,0.3);
+  }
+  .public-main .accent { color: #ffe033; }
+
+  /* LOWER THIRD — editable */
+  .lower-third {
+    flex-shrink: 0;
+    height: 98px;
+    background: #000;
+    border-top: 2px solid #e02020;
+    box-shadow: 0 -4px 20px rgba(220,30,30,0.35);
+    position: relative;
+  }
+
+  .lt-canvas {
     position: absolute;
-    left: 0; right: 0;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .lt-layer {
+    position: absolute;
+    white-space: pre;
+    line-height: 1;
+    cursor: move;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: none;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    transition: outline-color 0.12s;
+    padding: 2px;
+    margin: -2px;
+  }
+  .lt-layer:hover    { outline-color: rgba(59,130,246,0.5); }
+  .lt-layer.selected { outline-color: var(--blue); }
+  .lt-layer.editing {
+    outline-color: var(--red);
+    outline-style: dashed;
+    cursor: text;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  .lt-ticker {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
     height: 36px;
     background: #cc1a1a;
     display: flex;
     align-items: center;
     overflow: hidden;
-    border-top: 2px solid #e02020;
-    box-shadow: 0 -4px 20px rgba(220,30,30,0.35);
-    z-index: 20;
+    z-index: 2;
   }
-  .ticker-bar.hidden { display: none; }
-  .ticker-bar-inner {
+  .lt-ticker.hidden { display: none; }
+  .lt-ticker-inner {
     display: flex;
+    align-items: center;
     white-space: nowrap;
     animation: ticker-scroll 30s linear infinite;
   }
-  .ticker-bar-text {
+  .lt-ticker-text {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 18px;
     letter-spacing: 4px;
@@ -216,48 +320,6 @@
   @keyframes ticker-scroll {
     0%   { transform: translateX(0); }
     100% { transform: translateX(-50%); }
-  }
-
-  /* Layer container */
-  .layers {
-    position: absolute; inset: 0;
-    z-index: 10;
-  }
-
-  .layer {
-    position: absolute;
-    cursor: move;
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
-    touch-action: none;
-    line-height: 1;
-    outline: 2px solid transparent;
-    outline-offset: 2px;
-    transition: outline-color 0.12s;
-  }
-  .layer:hover { outline-color: rgba(59,130,246,0.5); }
-  .layer.selected { outline-color: var(--blue); }
-  .layer.editing {
-    cursor: text;
-    outline-color: var(--red);
-    outline-style: dashed;
-  }
-  .layer .text-inner {
-    white-space: pre;
-    outline: none;
-    display: inline-block;
-  }
-  .layer.framed .text-inner {
-    border: 3px solid rgba(220,30,30,0.85);
-    border-radius: 6px;
-    padding: 10px 16px;
-    background: rgba(0,0,0,0.72);
-    box-shadow: 0 0 24px rgba(220,30,30,0.5), 0 0 60px rgba(220,30,30,0.2), inset 0 0 20px rgba(220,30,30,0.08);
-  }
-  .layer img {
-    display: block;
-    pointer-events: none;
   }
 
   /* Properties panel */
@@ -280,47 +342,43 @@
     justify-content: space-between;
     align-items: center;
   }
-  .props-title .dup-del {
-    display: flex; gap: 6px;
-  }
   .props-title button {
     background: #222;
-    border: 1px solid #333;
-    color: #aaa;
+    border: 1px solid #552020;
+    color: #ff6b6b;
     border-radius: 5px;
-    padding: 4px 8px;
+    padding: 5px 10px;
     font-size: 11px;
     cursor: pointer;
+    letter-spacing: 1px;
   }
-  .props-title button.danger { color: #ff6b6b; border-color: #552020; }
-  .props-title button:hover { border-color: var(--red); color: #fff; }
+  .props-title button:hover { border-color: var(--red); color: #fff; background: var(--red); }
 
-  .props textarea, .props input[type=text], .props input[type=url] {
+  .props textarea {
     width: 100%;
     background: #0d0d0d;
     border: 1px solid var(--border);
     border-radius: 6px;
     color: var(--text);
-    font-size: 13px;
-    padding: 8px 10px;
-    font-family: inherit;
+    font-size: 14px;
+    padding: 9px 10px;
+    font-family: 'Bebas Neue', monospace;
+    letter-spacing: 1px;
     resize: vertical;
+    min-height: 48px;
     margin-bottom: 10px;
   }
-  .props textarea { min-height: 52px; font-family: 'Bebas Neue', monospace; letter-spacing: 1px; }
-  .props textarea:focus, .props input:focus { outline: none; border-color: var(--red); }
+  .props textarea:focus { outline: none; border-color: var(--red); }
 
   .prop-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px 10px;
-    margin-bottom: 8px;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
   }
-  .prop-grid.three { grid-template-columns: repeat(3, 1fr); }
   .prop {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 5px;
   }
   .prop label {
     font-size: 9px;
@@ -329,57 +387,28 @@
     text-transform: uppercase;
     font-weight: 600;
   }
-  .prop input[type=number] {
+  .prop select, .prop input[type=number] {
     background: #0d0d0d;
     border: 1px solid var(--border);
     border-radius: 5px;
     color: var(--text);
     font-size: 13px;
-    padding: 6px 8px;
-    font-family: inherit;
-  }
-  .prop select {
-    background: #0d0d0d;
-    border: 1px solid var(--border);
-    border-radius: 5px;
-    color: var(--text);
-    font-size: 13px;
-    padding: 6px 8px;
+    padding: 7px 9px;
     font-family: inherit;
   }
   .prop input[type=color] {
     width: 100%;
-    height: 30px;
+    height: 32px;
     background: #0d0d0d;
     border: 1px solid var(--border);
     border-radius: 5px;
     cursor: pointer;
     padding: 2px;
   }
-  .prop-check {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #0d0d0d;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 8px 10px;
-    cursor: pointer;
-    font-size: 12px;
-    color: #ddd;
-  }
-  .prop-check input { accent-color: var(--red); }
 
-  /* Add buttons + ticker editor */
-  .add-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 14px;
-    flex-wrap: wrap;
-  }
+  /* Add button */
   .add-btn {
-    flex: 1;
-    min-width: 120px;
+    width: 100%;
     background: none;
     border: 1px dashed #333;
     border-radius: 10px;
@@ -388,9 +417,11 @@
     font-size: 13px;
     cursor: pointer;
     letter-spacing: 1px;
+    margin-bottom: 14px;
   }
   .add-btn:hover { border-color: var(--red); color: var(--red); }
 
+  /* Ticker editor */
   .ticker-editor {
     background: var(--card);
     border: 1px solid var(--border);
@@ -415,6 +446,7 @@
     display: flex; align-items: center; gap: 6px;
     font-size: 12px; color: #ddd; cursor: pointer;
   }
+  .ticker-editor .toggle input { accent-color: var(--red); }
   .ticker-editor textarea {
     width: 100%;
     background: #0d0d0d;
@@ -425,30 +457,9 @@
     padding: 9px 10px;
     font-family: 'Bebas Neue', monospace;
     letter-spacing: 2px;
-    min-height: 48px;
+    min-height: 46px;
     resize: vertical;
   }
-
-  .section-title {
-    font-size: 11px;
-    letter-spacing: 3px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin: 14px 0 8px;
-    font-weight: 600;
-  }
-
-  .help {
-    font-size: 11px;
-    color: #666;
-    padding: 10px 12px;
-    background: #111;
-    border: 1px solid #222;
-    border-radius: 8px;
-    margin-bottom: 14px;
-    line-height: 1.5;
-  }
-  .help b { color: #aaa; }
 </style>
 </head>
 <body>
@@ -456,8 +467,8 @@
 <header>
   <div class="logo">B</div>
   <div>
-    <h1>Ad Editor</h1>
-    <p>Drag text anywhere · double-tap to edit · saves live to GitHub</p>
+    <h1>Lower Third Editor</h1>
+    <p>Only the area below the red line is editable · saves live to GitHub</p>
   </div>
 </header>
 
@@ -468,28 +479,44 @@
 <div class="status" id="status"></div>
 
 <div class="help">
-  <b>Tap</b> a text layer to select · <b>drag</b> to move · <b>double-tap</b> to edit text · use the panel below to change font size, color, etc.
+  <b>Tap</b> a text to select · <b>drag</b> to move · <b>double-tap</b> to edit · pick font / size / color below
 </div>
 
-<!-- Live ad preview with draggable text -->
+<!-- Live ad preview -->
 <div class="stage-wrap">
-  <div class="stage-label">
-    <span>Live Ad Preview</span>
-    <span class="stage-hint">800 × 400</span>
-  </div>
+  <div class="stage-label">Live Preview</div>
   <div class="stage" id="stage">
     <div class="ad" id="ad">
-      <div class="ad-bg">
-        <div class="left-panel"></div>
-        <div class="right-panel">
+
+      <div class="main-row">
+        <!-- LEFT (locked) -->
+        <div class="left">
+          <div class="brand">BASELINE<br>BAR <span class="amp">&amp;</span> GRILLE</div>
+          <div class="inside-badge">
+            <span>INSIDE</span>
+            <img src="https://pickletester.github.io/test-ad/Logo%20LevelUP.png" alt="LevelUp">
+          </div>
+        </div>
+        <!-- RIGHT (locked) -->
+        <div class="right">
           <canvas id="frameCanvas"></canvas>
           <div class="ember"></div>
+          <div class="public-badge">
+            <div class="public-inner">
+              <div class="public-main">OPEN<br>TO THE<br><span class="accent">PUBLIC</span></div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="layers" id="layers"></div>
-      <div class="ticker-bar" id="tickerBar" style="bottom:0;">
-        <div class="ticker-bar-inner" id="tickerBarInner"></div>
+
+      <!-- LOWER THIRD (editable) -->
+      <div class="lower-third">
+        <div class="lt-canvas" id="ltCanvas"></div>
+        <div class="lt-ticker" id="ltTicker">
+          <div class="lt-ticker-inner" id="ltTickerInner"></div>
+        </div>
       </div>
+
     </div>
   </div>
 </div>
@@ -497,27 +524,39 @@
 <!-- Properties panel (shown when layer selected) -->
 <div class="props hidden" id="propsPanel">
   <div class="props-title">
-    <span id="propsTitle">Layer</span>
-    <div class="dup-del">
-      <button onclick="duplicateLayer()">Duplicate</button>
-      <button class="danger" onclick="deleteLayer()">Delete</button>
+    <span>Selected Text</span>
+    <button onclick="deleteLayer()">Delete</button>
+  </div>
+  <textarea id="propText" placeholder="Enter text…" oninput="updateProp('text', this.value)"></textarea>
+  <div class="prop-grid">
+    <div class="prop">
+      <label>Font</label>
+      <select id="propFont" onchange="updateProp('fontFamily', this.value)">
+        <option value="bebas">Bebas Neue</option>
+        <option value="barlow">Barlow Condensed</option>
+        <option value="serif">Serif</option>
+        <option value="sans">Sans</option>
+      </select>
+    </div>
+    <div class="prop">
+      <label>Size</label>
+      <input type="number" id="propSize" min="6" max="72" oninput="updateProp('fontSize', +this.value)">
+    </div>
+    <div class="prop">
+      <label>Color</label>
+      <input type="color" id="propColor" oninput="updateProp('color', this.value)">
     </div>
   </div>
-  <div id="propsBody"></div>
 </div>
 
-<!-- Add buttons -->
-<div class="add-row">
-  <button class="add-btn" onclick="addTextLayer()">+ Add Text</button>
-  <button class="add-btn" onclick="addImageLayer()">+ Add Image</button>
-</div>
+<button class="add-btn" onclick="addText()">+ Add Text</button>
 
 <!-- Ticker editor -->
 <div class="ticker-editor">
   <div class="th">
     <label>Scrolling Ticker</label>
     <label class="toggle">
-      <input type="checkbox" id="tickerEnabled" checked onchange="syncTicker()">
+      <input type="checkbox" id="tickerEnabled" onchange="syncTicker()">
       Enabled
     </label>
   </div>
@@ -531,7 +570,7 @@ const BRANCH = 'main';
 const PATH   = 'lower-third.json';
 
 /* ═══════════════════════════════════════════
-   BURGER ANIMATION (same as sign)
+   BURGER ANIMATION (preview)
 ═══════════════════════════════════════════ */
 const BASE_URL    = 'https://pickletester.github.io/test-ad/Frames/';
 const FRAME_COUNT = 145;
@@ -539,14 +578,12 @@ const FPS         = 18;
 const INTERVAL_MS = 1000 / FPS;
 const canvas = document.getElementById('frameCanvas');
 const ctx    = canvas.getContext('2d');
-
 function sizeCanvas() {
   const w = canvas.offsetWidth, h = canvas.offsetHeight;
   canvas.width  = w > 0 ? w : 410;
-  canvas.height = h > 0 ? h : 400;
+  canvas.height = h > 0 ? h : 300;
 }
 requestAnimationFrame(() => { sizeCanvas(); window.addEventListener('resize', sizeCanvas); startLoading(); });
-
 function frameUrl(n) {
   return `${BASE_URL}Gen-4_5_-_burger_in_fire_gen-4_5_-_burger_in_fire__1__${String(n).padStart(3,'0')}.jpg`;
 }
@@ -585,7 +622,7 @@ function tick(ts) {
 }
 
 /* ═══════════════════════════════════════════
-   STAGE SCALING (fit the 800×400 ad to the container)
+   STAGE SCALING
 ═══════════════════════════════════════════ */
 const stage = document.getElementById('stage');
 const adEl  = document.getElementById('ad');
@@ -596,89 +633,80 @@ function fitStage() {
   adEl.style.transform = `scale(${scale})`;
 }
 window.addEventListener('resize', fitStage);
-// Fit after fonts & layout settle
 setTimeout(fitStage, 30);
 setTimeout(fitStage, 200);
 new ResizeObserver(fitStage).observe(stage);
 
 /* ═══════════════════════════════════════════
-   STATE (layers + ticker)
+   STATE
 ═══════════════════════════════════════════ */
-const DEFAULTS = {
-  version: 2,
-  ticker: {
-    enabled: true,
-    text: 'BINGO NIGHT  •  TRIVIA NIGHT  •  SPORTS NIGHT  •  HAPPY HOUR TUE–FRI 4–6PM  •  OPEN TO THE PUBLIC'
-  },
-  layers: [
-    { id: 'brand', type: 'text', text: 'BASELINE\nBAR & GRILLE',
-      x: 20, y: 110, fontFamily: 'bebas', fontSize: 72, color: '#ffffff',
-      letterSpacing: 1, lineHeight: 0.88, textAlign: 'center', width: 370, frame: false,
-      textShadow: '2px 3px 8px rgba(0,0,0,0.8)' },
-    { id: 'inside', type: 'text', text: 'INSIDE',
-      x: 110, y: 270, fontFamily: 'barlow', fontSize: 21, color: '#ffffff',
-      letterSpacing: 4, lineHeight: 1, textAlign: 'left', fontWeight: 700, width: 0, frame: false },
-    { id: 'levelup', type: 'image',
-      src: 'https://pickletester.github.io/test-ad/Logo%20LevelUP.png',
-      x: 210, y: 262, width: 100, height: 42 },
-    { id: 'public', type: 'text', text: 'OPEN\nTO THE\nPUBLIC',
-      x: 620, y: 22, fontFamily: 'bebas', fontSize: 32, color: '#ffffff',
-      letterSpacing: 3, lineHeight: 1, textAlign: 'center', width: 0, frame: true,
-      textShadow: '0 0 16px rgba(255,50,50,0.7), 0 0 40px rgba(255,50,50,0.3)' },
-    { id: 'hoursLabel', type: 'text', text: 'HOURS',
-      x: 40, y: 305, fontFamily: 'barlow', fontSize: 10, color: '#e02020',
-      letterSpacing: 4, lineHeight: 1, textAlign: 'left', fontWeight: 700, width: 0, frame: false },
-    { id: 'hoursValue', type: 'text', text: 'TUE – SAT  11AM – 10PM',
-      x: 40, y: 322, fontFamily: 'bebas', fontSize: 24, color: '#ffffff',
-      letterSpacing: 2, lineHeight: 1, textAlign: 'left', width: 0, frame: false },
-    { id: 'hhLabel', type: 'text', text: 'HAPPY HOUR',
-      x: 290, y: 305, fontFamily: 'barlow', fontSize: 10, color: '#e02020',
-      letterSpacing: 4, lineHeight: 1, textAlign: 'left', fontWeight: 700, width: 0, frame: false },
-    { id: 'hhValue', type: 'text', text: 'TUE – FRI  4 – 6 PM',
-      x: 290, y: 322, fontFamily: 'bebas', fontSize: 24, color: '#ffffff',
-      letterSpacing: 2, lineHeight: 1, textAlign: 'left', width: 0, frame: false },
-    { id: 'tonightLabel', type: 'text', text: 'TONIGHT',
-      x: 540, y: 305, fontFamily: 'barlow', fontSize: 10, color: '#e02020',
-      letterSpacing: 4, lineHeight: 1, textAlign: 'left', fontWeight: 700, width: 0, frame: false },
-    { id: 'tonightValue', type: 'text', text: 'TRIVIA NIGHT',
-      x: 540, y: 322, fontFamily: 'bebas', fontSize: 24, color: '#ffffff',
-      letterSpacing: 2, lineHeight: 1, textAlign: 'left', width: 0, frame: false }
-  ]
-};
+const DEFAULT_LAYERS = [
+  { id: 'hoursLabel',   text: 'HOURS',                 x: 40,  y: 8,  fontFamily: 'barlow', fontSize: 10, color: '#e02020' },
+  { id: 'hoursValue',   text: 'TUE – SAT  11AM – 10PM', x: 40,  y: 22, fontFamily: 'bebas',  fontSize: 24, color: '#ffffff' },
+  { id: 'hhLabel',      text: 'HAPPY HOUR',            x: 290, y: 8,  fontFamily: 'barlow', fontSize: 10, color: '#e02020' },
+  { id: 'hhValue',      text: 'TUE – FRI  4 – 6 PM',    x: 290, y: 22, fontFamily: 'bebas',  fontSize: 24, color: '#ffffff' },
+  { id: 'tonightLabel', text: 'TONIGHT',               x: 540, y: 8,  fontFamily: 'barlow', fontSize: 10, color: '#e02020' },
+  { id: 'tonightValue', text: 'TRIVIA NIGHT',          x: 540, y: 22, fontFamily: 'bebas',  fontSize: 24, color: '#ffffff' }
+];
 
-let state = JSON.parse(JSON.stringify(DEFAULTS));
+let state = {
+  version: 2,
+  layers: JSON.parse(JSON.stringify(DEFAULT_LAYERS)),
+  ticker: { enabled: true, text: 'BINGO NIGHT  •  TRIVIA NIGHT  •  SPORTS NIGHT  •  HAPPY HOUR TUE–FRI 4–6PM  •  OPEN TO THE PUBLIC' }
+};
 let selectedId = null;
 
 /* ═══════════════════════════════════════════
-   LOAD from GitHub (migrate old schema if needed)
+   LOAD
 ═══════════════════════════════════════════ */
 async function loadFromGitHub() {
   try {
     const res = await fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${PATH}?v=${Date.now()}`, { cache: 'no-store' });
     if (!res.ok) { renderAll(); return; }
     const data = await res.json();
+
     if (data.version === 2 && Array.isArray(data.layers)) {
-      state = { ...DEFAULTS, ...data };
+      state.layers = data.layers;
+      if (data.ticker) state.ticker = { enabled: data.ticker.enabled !== false, text: data.ticker.text || '' };
     } else {
-      // Migrate old schema: keep defaults, override ticker if present
+      // Legacy migration
+      const blocks = data.blocks || [
+        { label: data.leftLabel,   value: data.leftValue   },
+        { label: data.centerLabel, value: data.centerValue },
+        { label: data.rightLabel,  value: data.rightValue  }
+      ].filter(b => b && (b.label || b.value));
+
+      if (blocks.length) {
+        state.layers = [];
+        const colX = [40, 290, 540, 640];
+        blocks.forEach((b, i) => {
+          const x = colX[i] ?? (40 + i * 170);
+          state.layers.push({ id: 'l_'+i+'_label', text: b.label || '', x, y: 8,  fontFamily: 'barlow', fontSize: 10, color: '#e02020' });
+          state.layers.push({ id: 'l_'+i+'_value', text: b.value || '', x, y: 22, fontFamily: 'bebas',  fontSize: 24, color: '#ffffff' });
+        });
+      }
       if (data.ticker) {
-        state.ticker = { enabled: true, text: typeof data.ticker === 'string' ? data.ticker : (data.ticker.text || '') };
+        const t = (typeof data.ticker === 'string') ? data.ticker : (data.ticker.text || '');
+        state.ticker = { enabled: true, text: t };
       }
     }
-  } catch(e) {
-    // keep defaults
-  }
+  } catch(e) {}
   renderAll();
 }
 
 /* ═══════════════════════════════════════════
    RENDER
 ═══════════════════════════════════════════ */
-const layersEl = document.getElementById('layers');
-const tickerBarEl = document.getElementById('tickerBar');
-const tickerBarInner = document.getElementById('tickerBarInner');
-const tickerInput = document.getElementById('tickerInput');
+const ltCanvas      = document.getElementById('ltCanvas');
+const ltTicker      = document.getElementById('ltTicker');
+const ltTickerInner = document.getElementById('ltTickerInner');
+const tickerInput   = document.getElementById('tickerInput');
 const tickerEnabled = document.getElementById('tickerEnabled');
+const propsPanel    = document.getElementById('propsPanel');
+const propText      = document.getElementById('propText');
+const propFont      = document.getElementById('propFont');
+const propSize      = document.getElementById('propSize');
+const propColor     = document.getElementById('propColor');
 
 function fontStack(f) {
   if (f === 'bebas')  return "'Bebas Neue', sans-serif";
@@ -686,138 +714,64 @@ function fontStack(f) {
   if (f === 'serif')  return "Georgia, serif";
   return "system-ui, sans-serif";
 }
+function letterSpacingFor(f) {
+  if (f === 'bebas')  return 2;
+  if (f === 'barlow') return 3;
+  return 0;
+}
+function fontWeightFor(f) {
+  if (f === 'barlow') return 700;
+  return 400;
+}
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
 function renderLayers() {
-  layersEl.innerHTML = '';
+  ltCanvas.innerHTML = '';
   state.layers.forEach(l => {
     const div = document.createElement('div');
-    div.className = 'layer' + (l.frame ? ' framed' : '') + (l.id === selectedId ? ' selected' : '');
-    div.dataset.id = l.id;
-    div.style.left = l.x + 'px';
-    div.style.top  = l.y + 'px';
-
-    if (l.type === 'image') {
-      const img = document.createElement('img');
-      img.src = l.src;
-      img.style.width  = (l.width  || 100) + 'px';
-      img.style.height = (l.height || 'auto') === 'auto' ? 'auto' : l.height + 'px';
-      div.appendChild(img);
-    } else {
-      const inner = document.createElement('div');
-      inner.className = 'text-inner';
-      inner.style.fontFamily    = fontStack(l.fontFamily);
-      inner.style.fontSize      = (l.fontSize || 24) + 'px';
-      inner.style.color         = l.color || '#ffffff';
-      inner.style.letterSpacing = (l.letterSpacing || 0) + 'px';
-      inner.style.lineHeight    = (l.lineHeight || 1);
-      inner.style.textAlign     = l.textAlign || 'left';
-      inner.style.fontWeight    = l.fontWeight || 400;
-      if (l.width && l.width > 0) inner.style.width = l.width + 'px';
-      if (l.textShadow) inner.style.textShadow = l.textShadow;
-      inner.textContent = l.text || '';
-      div.appendChild(inner);
-    }
-
+    div.className = 'lt-layer' + (l.id === selectedId ? ' selected' : '');
+    div.dataset.id          = l.id;
+    div.style.left          = (l.x || 0) + 'px';
+    div.style.top           = (l.y || 0) + 'px';
+    div.style.fontFamily    = fontStack(l.fontFamily);
+    div.style.fontSize      = (l.fontSize || 20) + 'px';
+    div.style.color         = l.color || '#ffffff';
+    div.style.letterSpacing = letterSpacingFor(l.fontFamily) + 'px';
+    div.style.fontWeight    = fontWeightFor(l.fontFamily);
+    div.textContent         = l.text || ' ';
     attachLayerHandlers(div, l);
-    layersEl.appendChild(div);
+    ltCanvas.appendChild(div);
   });
 }
 
 function renderTicker() {
-  tickerBarEl.classList.toggle('hidden', !state.ticker.enabled);
+  const enabled = state.ticker.enabled && (state.ticker.text || '').trim();
+  ltTicker.classList.toggle('hidden', !enabled);
   const t = state.ticker.text || '';
-  tickerBarInner.innerHTML = `<span class="ticker-bar-text">${escHtml(t)}</span><span class="ticker-bar-text">${escHtml(t)}</span>`;
+  ltTickerInner.innerHTML =
+    `<span class="lt-ticker-text">${esc(t)}</span>` +
+    `<span class="lt-ticker-text">${esc(t)}</span>`;
   tickerInput.value = t;
   tickerEnabled.checked = !!state.ticker.enabled;
 }
 
 function renderProps() {
-  const panel = document.getElementById('propsPanel');
-  const body  = document.getElementById('propsBody');
-  const title = document.getElementById('propsTitle');
   const l = state.layers.find(x => x.id === selectedId);
-  if (!l) { panel.classList.add('hidden'); return; }
-  panel.classList.remove('hidden');
-  title.textContent = (l.type === 'image' ? 'Image Layer' : 'Text Layer');
-
-  if (l.type === 'image') {
-    body.innerHTML = `
-      <input type="url" value="${escAttr(l.src)}" oninput="updateProp('src', this.value)" placeholder="Image URL">
-      <div class="prop-grid three">
-        <div class="prop"><label>X</label><input type="number" value="${l.x}" oninput="updateProp('x', +this.value)"></div>
-        <div class="prop"><label>Y</label><input type="number" value="${l.y}" oninput="updateProp('y', +this.value)"></div>
-        <div class="prop"><label>Width</label><input type="number" value="${l.width||100}" oninput="updateProp('width', +this.value)"></div>
-      </div>
-      <div class="prop-grid">
-        <div class="prop"><label>Height (0 = auto)</label><input type="number" value="${typeof l.height==='number'?l.height:0}" oninput="updateProp('height', +this.value)"></div>
-      </div>
-    `;
-    return;
-  }
-
-  // Text layer
-  body.innerHTML = `
-    <textarea rows="2" oninput="updateProp('text', this.value)" placeholder="Enter text…">${escHtml(l.text || '')}</textarea>
-    <div class="prop-grid three">
-      <div class="prop"><label>X</label><input type="number" value="${l.x}" oninput="updateProp('x', +this.value)"></div>
-      <div class="prop"><label>Y</label><input type="number" value="${l.y}" oninput="updateProp('y', +this.value)"></div>
-      <div class="prop"><label>Size</label><input type="number" value="${l.fontSize||24}" oninput="updateProp('fontSize', +this.value)"></div>
-    </div>
-    <div class="prop-grid">
-      <div class="prop"><label>Font</label>
-        <select onchange="updateProp('fontFamily', this.value)">
-          <option value="bebas"  ${l.fontFamily==='bebas'?'selected':''}>Bebas Neue</option>
-          <option value="barlow" ${l.fontFamily==='barlow'?'selected':''}>Barlow Condensed</option>
-          <option value="serif"  ${l.fontFamily==='serif'?'selected':''}>Serif</option>
-          <option value="sans"   ${l.fontFamily==='sans'?'selected':''}>Sans</option>
-        </select>
-      </div>
-      <div class="prop"><label>Color</label><input type="color" value="${l.color||'#ffffff'}" oninput="updateProp('color', this.value)"></div>
-    </div>
-    <div class="prop-grid three">
-      <div class="prop"><label>Letter&nbsp;Sp.</label><input type="number" step="0.5" value="${l.letterSpacing||0}" oninput="updateProp('letterSpacing', +this.value)"></div>
-      <div class="prop"><label>Line&nbsp;Ht.</label><input type="number" step="0.05" value="${l.lineHeight||1}" oninput="updateProp('lineHeight', +this.value)"></div>
-      <div class="prop"><label>Weight</label>
-        <select onchange="updateProp('fontWeight', +this.value)">
-          <option value="400" ${(l.fontWeight||400)==400?'selected':''}>400</option>
-          <option value="600" ${(l.fontWeight||400)==600?'selected':''}>600</option>
-          <option value="700" ${(l.fontWeight||400)==700?'selected':''}>700</option>
-          <option value="900" ${(l.fontWeight||400)==900?'selected':''}>900</option>
-        </select>
-      </div>
-    </div>
-    <div class="prop-grid three">
-      <div class="prop"><label>Align</label>
-        <select onchange="updateProp('textAlign', this.value)">
-          <option value="left"   ${l.textAlign==='left'?'selected':''}>Left</option>
-          <option value="center" ${l.textAlign==='center'?'selected':''}>Center</option>
-          <option value="right"  ${l.textAlign==='right'?'selected':''}>Right</option>
-        </select>
-      </div>
-      <div class="prop"><label>Box&nbsp;Width</label><input type="number" value="${l.width||0}" oninput="updateProp('width', +this.value)" placeholder="0 = auto"></div>
-      <label class="prop-check" style="align-self:end;">
-        <input type="checkbox" ${l.frame?'checked':''} onchange="updateProp('frame', this.checked)">
-        Red Frame
-      </label>
-    </div>
-  `;
+  if (!l) { propsPanel.classList.add('hidden'); return; }
+  propsPanel.classList.remove('hidden');
+  // Only update inputs if they're not focused (don't steal focus / overwrite typing)
+  if (document.activeElement !== propText)  propText.value  = l.text || '';
+  if (document.activeElement !== propFont)  propFont.value  = l.fontFamily || 'bebas';
+  if (document.activeElement !== propSize)  propSize.value  = l.fontSize || 20;
+  if (document.activeElement !== propColor) propColor.value = l.color || '#ffffff';
 }
 
-function renderAll() {
-  renderLayers();
-  renderTicker();
-  renderProps();
-}
-
-function escHtml(s) {
-  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-function escAttr(s) {
-  return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');
-}
+function renderAll() { renderLayers(); renderTicker(); renderProps(); }
 
 /* ═══════════════════════════════════════════
-   LAYER INTERACTIONS
+   DRAG + SELECT + INLINE EDIT
 ═══════════════════════════════════════════ */
 function selectLayer(id) {
   selectedId = id;
@@ -831,14 +785,14 @@ function attachLayerHandlers(el, layer) {
   let moved = false;
 
   el.addEventListener('pointerdown', (e) => {
-    if (el.classList.contains('editing')) return; // don't drag while editing
+    if (el.classList.contains('editing')) return;
     e.preventDefault();
     e.stopPropagation();
     selectLayer(layer.id);
     el.setPointerCapture(e.pointerId);
     moved = false;
     const adRect = adEl.getBoundingClientRect();
-    const scale = adRect.width / 800;
+    const scale  = adRect.width / 800;
     dragState = {
       startClientX: e.clientX,
       startClientY: e.clientY,
@@ -853,20 +807,20 @@ function attachLayerHandlers(el, layer) {
     const dx = (e.clientX - dragState.startClientX) / dragState.scale;
     const dy = (e.clientY - dragState.startClientY) / dragState.scale;
     if (Math.abs(dx) > 1 || Math.abs(dy) > 1) moved = true;
-    layer.x = Math.round(dragState.startX + dx);
-    layer.y = Math.round(dragState.startY + dy);
-    el.style.left = layer.x + 'px';
-    el.style.top  = layer.y + 'px';
-    renderProps(); // update X/Y inputs
+    // Clamp inside lower-third (98px tall, 800px wide)
+    const newX = Math.max(0, Math.min(790, Math.round(dragState.startX + dx)));
+    const newY = Math.max(2, Math.min(94, Math.round(dragState.startY + dy)));
+    layer.x = newX; layer.y = newY;
+    el.style.left = newX + 'px';
+    el.style.top  = newY + 'px';
   });
 
   el.addEventListener('pointerup', (e) => {
     if (!dragState) return;
     try { el.releasePointerCapture(e.pointerId); } catch(_){}
     dragState = null;
-    // Double-tap detection
     const now = Date.now();
-    if (!moved && now - lastTap < 350 && layer.type === 'text') {
+    if (!moved && now - lastTap < 350) {
       enterEditMode(el, layer);
     }
     lastTap = moved ? 0 : now;
@@ -874,45 +828,41 @@ function attachLayerHandlers(el, layer) {
 
   el.addEventListener('dblclick', (e) => {
     e.preventDefault();
-    if (layer.type === 'text') enterEditMode(el, layer);
+    enterEditMode(el, layer);
   });
 }
 
 function enterEditMode(el, layer) {
   if (el.classList.contains('editing')) return;
-  const inner = el.querySelector('.text-inner');
-  if (!inner) return;
   el.classList.add('editing');
-  inner.contentEditable = 'true';
-  inner.focus();
+  el.contentEditable = 'true';
+  el.focus();
   // Select all
   const r = document.createRange();
-  r.selectNodeContents(inner);
+  r.selectNodeContents(el);
   const s = window.getSelection();
   s.removeAllRanges(); s.addRange(r);
 
   const finish = (save) => {
-    inner.contentEditable = 'false';
+    el.contentEditable = 'false';
     el.classList.remove('editing');
     if (save) {
-      layer.text = inner.innerText;
+      layer.text = el.innerText.replace(/\n+$/, '');
     }
-    inner.textContent = layer.text; // normalize
+    el.textContent = layer.text || ' ';
     renderProps();
   };
 
-  inner.addEventListener('blur', () => finish(true), { once: true });
-  inner.addEventListener('keydown', function onKey(e) {
-    if (e.key === 'Escape') { inner.removeEventListener('keydown', onKey); finish(false); inner.blur(); }
-    if (e.key === 'Enter' && !e.shiftKey) { /* allow newline with shift; otherwise commit */
-      if (!e.shiftKey) { e.preventDefault(); inner.removeEventListener('keydown', onKey); finish(true); inner.blur(); }
-    }
+  el.addEventListener('blur', () => finish(true), { once: true });
+  el.addEventListener('keydown', function onKey(e) {
+    if (e.key === 'Escape') { e.preventDefault(); el.removeEventListener('keydown', onKey); finish(false); el.blur(); }
+    if (e.key === 'Enter')  { e.preventDefault(); el.removeEventListener('keydown', onKey); finish(true);  el.blur(); }
   });
 }
 
 // Click outside → deselect
 document.getElementById('stage').addEventListener('pointerdown', (e) => {
-  if (e.target.closest('.layer')) return;
+  if (e.target.closest('.lt-layer')) return;
   selectedId = null;
   renderLayers();
   renderProps();
@@ -926,60 +876,40 @@ function updateProp(key, value) {
   if (!l) return;
   l[key] = value;
   renderLayers();
-  // Don't re-render props (would blow away focus); numeric/X/Y inputs stay in sync via pointermove
 }
 
-function addTextLayer() {
-  const id = 'text_' + Date.now().toString(36);
+function addText() {
+  const id = 't_' + Date.now().toString(36);
   state.layers.push({
-    id, type: 'text', text: 'NEW TEXT',
-    x: 200, y: 180, fontFamily: 'bebas', fontSize: 36, color: '#ffffff',
-    letterSpacing: 2, lineHeight: 1, textAlign: 'left', fontWeight: 400, width: 0, frame: false
+    id, text: 'NEW TEXT',
+    x: 300, y: 40,
+    fontFamily: 'bebas', fontSize: 24, color: '#ffffff'
   });
   selectedId = id;
   renderAll();
 }
 
-function addImageLayer() {
-  const url = prompt('Image URL:', 'https://pickletester.github.io/test-ad/Logo%20LevelUP.png');
-  if (!url) return;
-  const id = 'img_' + Date.now().toString(36);
-  state.layers.push({ id, type: 'image', src: url, x: 300, y: 180, width: 120, height: 0 });
-  selectedId = id;
-  renderAll();
-}
-
-function duplicateLayer() {
-  const l = state.layers.find(x => x.id === selectedId);
-  if (!l) return;
-  const copy = JSON.parse(JSON.stringify(l));
-  copy.id = (l.type === 'image' ? 'img_' : 'text_') + Date.now().toString(36);
-  copy.x += 20; copy.y += 20;
-  state.layers.push(copy);
-  selectedId = copy.id;
-  renderAll();
-}
-
 function deleteLayer() {
+  if (!selectedId) return;
   state.layers = state.layers.filter(x => x.id !== selectedId);
   selectedId = null;
   renderAll();
 }
 
+// Arrow-key nudging (when nothing focused)
 document.addEventListener('keydown', (e) => {
   if (!selectedId) return;
-  // Ignore if focus is in an input / editable field
   const tag = (document.activeElement && document.activeElement.tagName) || '';
   if (['INPUT','TEXTAREA','SELECT'].includes(tag)) return;
   if (document.activeElement && document.activeElement.isContentEditable) return;
-  if (e.key === 'Delete' || e.key === 'Backspace') {
-    e.preventDefault(); deleteLayer();
-  } else if (e.key === 'ArrowLeft')  { const l=getSel(); if(l){l.x--;renderLayers();renderProps();} }
-  else   if (e.key === 'ArrowRight') { const l=getSel(); if(l){l.x++;renderLayers();renderProps();} }
-  else   if (e.key === 'ArrowUp')    { const l=getSel(); if(l){l.y--;renderLayers();renderProps();} }
-  else   if (e.key === 'ArrowDown')  { const l=getSel(); if(l){l.y++;renderLayers();renderProps();} }
+  const l = state.layers.find(x => x.id === selectedId);
+  if (!l) return;
+  if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); deleteLayer(); return; }
+  if (e.key === 'ArrowLeft')  { l.x = Math.max(0,   l.x - 1); renderLayers(); }
+  if (e.key === 'ArrowRight') { l.x = Math.min(790, l.x + 1); renderLayers(); }
+  if (e.key === 'ArrowUp')    { l.y = Math.max(2,   l.y - 1); renderLayers(); }
+  if (e.key === 'ArrowDown')  { l.y = Math.min(94,  l.y + 1); renderLayers(); }
 });
-function getSel(){ return state.layers.find(x=>x.id===selectedId); }
 
 /* ═══════════════════════════════════════════
    TICKER
@@ -991,7 +921,7 @@ function syncTicker() {
 }
 
 /* ═══════════════════════════════════════════
-   SAVE TO GITHUB
+   SAVE
 ═══════════════════════════════════════════ */
 async function save() {
   const token = document.getElementById('ghToken').value.trim();
@@ -1000,7 +930,6 @@ async function save() {
   btn.disabled = true;
   setStatus('Saving…', '');
 
-  // Keep old keys for back-compat with any other consumer
   const payload = {
     version: 2,
     layers: state.layers,
@@ -1014,7 +943,7 @@ async function save() {
     let sha;
     if (meta.ok) { const j = await meta.json(); sha = j.sha; }
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
-    const body = { message: 'update ad layers', content, branch: BRANCH };
+    const body = { message: 'update lower third', content, branch: BRANCH };
     if (sha) body.sha = sha;
     const put = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`, {
       method: 'PUT',
@@ -1037,7 +966,7 @@ function setStatus(msg, cls) {
 }
 
 /* ═══════════════════════════════════════════
-   TOKEN PERSISTENCE + INIT
+   TOKEN + INIT
 ═══════════════════════════════════════════ */
 const tokenEl = document.getElementById('ghToken');
 const savedToken = localStorage.getItem('bbg_gh_token');
