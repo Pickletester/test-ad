@@ -1,9 +1,63 @@
 {
-  "leftLabel": "HOURS",
-  "leftValue": "TUE – SAT  11AM – 10PM",
-  "centerLabel": "HAPPY HOUR",
-  "centerValue": "TUE – FRI  4 – 6 PM",
-  "rightLabel": "TONIGHT",
-  "rightValue": "TRIVIA NIGHT",
-  "ticker": "BINGO NIGHT  •  TRIVIA NIGHT  •  SPORTS NIGHT  •  HAPPY HOUR TUE–FRI 4–6PM  •  OPEN TO THE PUBLIC"
+  "version": 2,
+  "layers": [
+    {
+      "id": "l_0_label",
+      "text": "HOURS",
+      "x": 40,
+      "y": 8,
+      "fontFamily": "barlow",
+      "fontSize": 10,
+      "color": "#e02020"
+    },
+    {
+      "id": "l_0_value",
+      "text": "TUE – SAT  11AM – 10PM",
+      "x": 40,
+      "y": 22,
+      "fontFamily": "bebas",
+      "fontSize": 24,
+      "color": "#ffffff"
+    },
+    {
+      "id": "l_1_label",
+      "text": "HAPPY HOUR",
+      "x": 290,
+      "y": 8,
+      "fontFamily": "barlow",
+      "fontSize": 10,
+      "color": "#e02020"
+    },
+    {
+      "id": "l_1_value",
+      "text": "TUE – FRI  4 – 6 PM",
+      "x": 290,
+      "y": 22,
+      "fontFamily": "bebas",
+      "fontSize": 24,
+      "color": "#ffffff"
+    },
+    {
+      "id": "l_2_label",
+      "text": "TONIGHT",
+      "x": 540,
+      "y": 8,
+      "fontFamily": "barlow",
+      "fontSize": 10,
+      "color": "#e02020"
+    },
+    {
+      "id": "l_2_value",
+      "text": "TRIVIA NIGHT",
+      "x": 540,
+      "y": 22,
+      "fontFamily": "bebas",
+      "fontSize": 24,
+      "color": "#ffffff"
+    }
+  ],
+  "ticker": {
+    "enabled": true,
+    "text": "BINGO NIGHT  •  TRIVIA NIGHT  •  SPORTS NIGHT  •  HAPPY HOUR TUE–FRI 4–6PM  •  OPEN TO THE PUBLIC"
+  }
 }
