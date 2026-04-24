@@ -15,7 +15,6 @@
     justify-content: center;
     min-height: 100vh;
     font-family: 'Barlow Condensed', sans-serif;
-    /* No opacity hide — layout shows immediately */
   }
 
   #frameCanvas {
@@ -58,17 +57,18 @@
   .main-row {
     display: flex;
     flex: 1;
-    height: 352px;
+    height: 300px;
   }
 
   /* ── LEFT ── */
   .left {
-    width: 360px;
+    width: 390px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 24px 28px 24px 32px;
+    align-items: center;
+    padding: 24px 20px;
     position: relative;
     background: #000;
     z-index: 2;
@@ -84,13 +84,14 @@
 
   .brand {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 62px;
+    font-size: 72px;
     color: #fff;
     line-height: 0.88;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     text-shadow: 2px 3px 8px rgba(0,0,0,0.8);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     white-space: nowrap;
+    text-align: center;
   }
 
   .brand .amp {
@@ -198,14 +199,6 @@
     background: #080000;
   }
 
-  /* Invisible shield over video — also kills Cast hover target */
-  .video-shield {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: transparent;
-  }
-
   /* left blend fade */
   .right::before {
     content: '';
@@ -309,14 +302,42 @@
     white-space: nowrap;
   }
 
-  .ticker-item {
+  /* ── BOTTOM INFO AREA ── */
+  .info-area {
+    height: 100px;
+    background: #000;
+    border-top: 2px solid #e02020;
+    box-shadow: 0 -4px 20px rgba(220,30,30,0.3);
+    flex-shrink: 0;
+  }
+
+  .info-area .ia-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .info-area .ia-label {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: rgba(220,30,30,0.9);
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .info-area .ia-value {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
+    font-size: 28px;
     letter-spacing: 2px;
     color: #fff;
-    font-weight: 900;
-    text-shadow: 0 0 12px rgba(255,255,255,0.4);
     white-space: nowrap;
+  }
+
+  .info-area .ia-sep {
+    width: 1px;
+    height: 44px;
+    background: rgba(255,255,255,0.12);
+    flex-shrink: 0;
   }
 </style>
 </head>
@@ -329,21 +350,15 @@
     <!-- LEFT -->
     <div class="left">
       <div class="brand">BASELINE<br>BAR <span class="amp">&amp;</span> GRILLE</div>
-      <div class="divider"></div>
-      <div class="tagline" style="color:#e02020;text-shadow:0 0 16px rgba(220,30,30,0.6);letter-spacing:8px;text-align:left;padding-left:2px;">Eat. Drink. Connect.</div>
       <div class="info-rows">
-        <div class="info-row" style="margin-top:2px; justify-content:center;">
-          <div style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:10px 20px 10px 14px;">
-            <span style="font-size:20px;letter-spacing:4px;color:#fff;text-transform:uppercase;font-weight:700;border-right:1px solid rgba(255,255,255,0.2);padding-right:16px;white-space:nowrap;">INSIDE</span>
-            <img src="https://pickletester.github.io/test-ad/Logo%20LevelUP.png" alt="LevelUp" style="height:38px;width:auto;object-fit:contain;">
+        <div class="info-row" style="margin-top:2px; justify-content:center; width:100%;">
+          <div style="display:flex;align-items:center;gap:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:12px 22px 12px 16px;">
+            <span style="font-size:21px;letter-spacing:4px;color:#fff;text-transform:uppercase;font-weight:700;border-right:1px solid rgba(255,255,255,0.2);padding-right:16px;white-space:nowrap;">INSIDE</span>
+            <img src="uploads/Logo LevelUP.png" alt="LevelUp" style="height:42px;width:auto;object-fit:contain;">
           </div>
         </div>
       </div>
-      <div class="hh-badge">
-        <div class="hh-label">Happy Hour</div>
-        <div class="hh-sep"></div>
-        <div class="hh-time">Tue – Fri &nbsp;·&nbsp; 4 – 6 PM</div>
-      </div>
+
     </div>
 
     <!-- RIGHT -->
@@ -351,10 +366,6 @@
       <canvas id="frameCanvas"></canvas>
       <div class="ember"></div>
 
-      <!-- EVENTS tab -->
-      <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);background:#cc1a1a;padding:5px 20px;border-radius:4px 4px 0 0;z-index:8;white-space:nowrap;box-shadow:0 -4px 16px rgba(200,20,20,0.5);">
-        <span style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:4px;color:#fff;">EVENTS</span>
-      </div>
 
       <!-- OPEN TO THE PUBLIC -->
       <div class="public-badge">
@@ -366,13 +377,8 @@
 
   </div>
 
-  <!-- BOTTOM BAR -->
-  <div class="ticker">
-    <div class="ticker-tag"><span>OPEN TUESDAY – SATURDAY &nbsp;·&nbsp; 11AM – 10PM</span></div>
-    <div style="flex:1;display:flex;align-items:center;justify-content:center;">
-      <span class="ticker-item">BINGO NIGHT &nbsp;•&nbsp; TRIVIA NIGHT &nbsp;•&nbsp; SPORTS NIGHT</span>
-    </div>
-  </div>
+  <!-- BOTTOM INFO AREA -->
+  <div class="info-area"></div>
 
 </div>
 
@@ -385,29 +391,18 @@
   const canvas = document.getElementById('frameCanvas');
   const ctx    = canvas.getContext('2d');
 
-  // Debug label — shows load progress on screen
-  const dbg = document.createElement('div');
-  dbg.style.cssText = 'position:absolute;bottom:52px;left:4px;color:#0f0;font-size:10px;font-family:monospace;z-index:999;pointer-events:none;background:rgba(0,0,0,0.6);padding:2px 4px;border-radius:2px;';
-  document.querySelector('.right').appendChild(dbg);
-  function log(m){ dbg.textContent = m; }
-
-  // Size canvas AFTER layout — wait for next frame so offsetWidth is real
   function sizeCanvas() {
     const w = canvas.offsetWidth;
     const h = canvas.offsetHeight;
     if (w > 0 && h > 0) {
       canvas.width  = w;
       canvas.height = h;
-      log(`canvas ${w}x${h}`);
     } else {
-      // Fallback fixed size matching the .right panel
       canvas.width  = 440;
       canvas.height = 352;
-      log(`canvas fallback 440x352`);
     }
   }
 
-  // Defer sizing until after first paint
   requestAnimationFrame(() => {
     sizeCanvas();
     window.addEventListener('resize', sizeCanvas);
@@ -420,33 +415,20 @@
   }
 
   const frames = new Array(FRAME_COUNT).fill(null);
-  let loaded = 0, errors = 0, loopStarted = false;
+  let loaded = 0, loopStarted = false;
 
   function startLoopIfNeeded() {
     if (!loopStarted && frames[0]) {
       loopStarted = true;
-      log(`playing! errors:${errors}`);
       requestAnimationFrame(tick);
     }
   }
 
   function startLoading() {
-    log('loading 1...');
     for (let i = 0; i < FRAME_COUNT; i++) {
       const img = new Image();
-      // No crossOrigin — same-origin Pages request, avoids taint issues
-      img.onload = () => {
-        frames[i] = img;
-        loaded++;
-        if (loaded % 10 === 0) log(`loaded ${loaded}/${FRAME_COUNT}`);
-        startLoopIfNeeded();
-      };
-      img.onerror = () => {
-        errors++;
-        loaded++;
-        log(`ERR ${errors} at frame ${i+1}`);
-        startLoopIfNeeded();
-      };
+      img.onload = () => { frames[i] = img; loaded++; startLoopIfNeeded(); };
+      img.onerror = () => { loaded++; startLoopIfNeeded(); };
       img.src = frameUrl(i + 1);
     }
   }
