@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lower Third Editor – Baseline BBG</title>
+<title>Ad Editor – Baseline BBG</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --red: #e02020;
@@ -12,6 +13,7 @@
     --border: #2a2a2a;
     --text: #f0f0f0;
     --muted: #888;
+    --blue: #3b82f6;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -21,61 +23,42 @@
     color: var(--text);
     font-family: 'Segoe UI', system-ui, sans-serif;
     min-height: 100vh;
-    padding: 24px 16px 60px;
+    padding: 16px 14px 80px;
   }
 
   header {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 28px;
+    gap: 12px;
+    margin-bottom: 16px;
   }
-
   header .logo {
-    width: 42px; height: 42px;
+    width: 38px; height: 38px;
     background: var(--red);
     border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 22px; font-weight: 900; color: #fff;
+    font-size: 20px; font-weight: 900; color: #fff;
     font-family: Georgia, serif;
     flex-shrink: 0;
   }
+  header h1 { font-size: 18px; font-weight: 700; color: #fff; }
+  header p  { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-  header h1 {
-    font-size: 20px;
-    font-weight: 700;
-    color: #fff;
-  }
-
-  header p {
-    font-size: 13px;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-
-  /* GitHub token row */
-  .token-row {
+  /* ── GH token + Save row ── */
+  .topbar {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 14px 16px;
-    margin-bottom: 20px;
+    padding: 10px;
+    margin-bottom: 14px;
     display: flex;
+    gap: 8px;
     align-items: center;
-    gap: 10px;
+    flex-wrap: wrap;
   }
-
-  .token-row label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--muted);
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  .token-row input {
+  .topbar input[type=password] {
     flex: 1;
+    min-width: 180px;
     background: #0d0d0d;
     border: 1px solid var(--border);
     border-radius: 6px;
@@ -84,294 +67,462 @@
     padding: 8px 10px;
     font-family: monospace;
   }
+  .save-btn {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .save-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .save-btn:hover:not(:disabled) { opacity: .85; }
 
-  /* Preview banner */
-  .preview-wrap {
-    margin-bottom: 20px;
+  .status {
+    font-size: 12px;
+    margin: -4px 0 14px;
+    min-height: 16px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .status.ok  { color: #4caf50; }
+  .status.err { color: var(--red); }
+
+  /* ── Preview stage ── */
+  .stage-wrap {
+    margin-bottom: 14px;
     border-radius: 10px;
     overflow: hidden;
     border: 1px solid var(--border);
+    background: #000;
   }
-
-  .preview-label {
+  .stage-label {
     background: #1a1a1a;
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 3px;
     color: var(--muted);
-    padding: 8px 14px;
+    padding: 7px 12px;
     text-transform: uppercase;
-  }
-
-  .preview {
-    background: #000;
-    border-top: 2px solid var(--red);
-    box-shadow: 0 -3px 16px rgba(220,30,30,0.3);
-  }
-
-  .preview-blocks {
     display: flex;
-    height: 62px;
-    padding: 0 16px;
-    align-items: stretch;
-  }
-
-  .preview-block {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 0 12px;
-    min-width: 0;
-  }
-
-  .preview-block + .preview-block {
-    border-left: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .preview-block .pl { font-size: 9px; letter-spacing: 4px; color: var(--red); text-transform: uppercase; font-weight: 700; margin-bottom: 2px; }
-  .preview-block .pv { font-family: 'Bebas Neue', Georgia, serif; font-size: 22px; letter-spacing: 2px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-  .preview-ticker {
-    height: 34px;
-    background: #cc1a1a;
-    overflow: hidden;
-    display: flex;
+    justify-content: space-between;
     align-items: center;
   }
+  .stage-hint { color: #666; font-size: 10px; letter-spacing: 1px; text-transform: none; }
 
-  .preview-ticker-inner {
+  .stage {
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    background: #000;
+    position: relative;
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  /* The 800x400 ad — rendered at logical size and scaled with transform to fit */
+  .ad {
+    width: 800px;
+    height: 400px;
+    position: absolute;
+    top: 0; left: 0;
+    transform-origin: top left;
+    background: #000;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+
+  .ad-bg {
+    position: absolute;
+    inset: 0;
+    display: flex;
+  }
+  .ad-bg .left-panel {
+    width: 390px;
+    flex-shrink: 0;
+    background: #000;
+    position: relative;
+  }
+  .ad-bg .left-panel::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 10% 50%, rgba(220,30,30,0.10) 0%, transparent 70%);
+  }
+  .ad-bg .right-panel {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    background: #080000;
+  }
+  .ad-bg .right-panel::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, #000 0%, rgba(0,0,0,0.55) 18%, rgba(0,0,0,0.15) 42%, transparent 65%);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .ad-bg .ember {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 120px;
+    background: linear-gradient(0deg, #000 0%, rgba(0,0,0,0.7) 40%, transparent 100%);
+    z-index: 3;
+    pointer-events: none;
+  }
+  #frameCanvas {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+    filter: brightness(0.82) contrast(1.18) saturate(1.15);
+  }
+
+  /* Scanline overlay */
+  .ad::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg,
+      transparent, transparent 2px,
+      rgba(0,0,0,0.10) 2px, rgba(0,0,0,0.10) 3px);
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* Ticker bar */
+  .ticker-bar {
+    position: absolute;
+    left: 0; right: 0;
+    height: 36px;
+    background: #cc1a1a;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    border-top: 2px solid #e02020;
+    box-shadow: 0 -4px 20px rgba(220,30,30,0.35);
+    z-index: 20;
+  }
+  .ticker-bar.hidden { display: none; }
+  .ticker-bar-inner {
+    display: flex;
     white-space: nowrap;
-    animation: ticker 28s linear infinite;
-    font-size: 15px;
-    letter-spacing: 3px;
+    animation: ticker-scroll 30s linear infinite;
+  }
+  .ticker-bar-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 4px;
     color: #fff;
-    font-weight: 700;
-    padding-left: 100%;
+    padding: 0 60px;
   }
-
-  @keyframes ticker {
+  @keyframes ticker-scroll {
     0%   { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
+    100% { transform: translateX(-50%); }
   }
 
-  /* Blocks editor */
-  .section-title {
+  /* Layer container */
+  .layers {
+    position: absolute; inset: 0;
+    z-index: 10;
+  }
+
+  .layer {
+    position: absolute;
+    cursor: move;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: none;
+    line-height: 1;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    transition: outline-color 0.12s;
+  }
+  .layer:hover { outline-color: rgba(59,130,246,0.5); }
+  .layer.selected { outline-color: var(--blue); }
+  .layer.editing {
+    cursor: text;
+    outline-color: var(--red);
+    outline-style: dashed;
+  }
+  .layer .text-inner {
+    white-space: pre;
+    outline: none;
+    display: inline-block;
+  }
+  .layer.framed .text-inner {
+    border: 3px solid rgba(220,30,30,0.85);
+    border-radius: 6px;
+    padding: 10px 16px;
+    background: rgba(0,0,0,0.72);
+    box-shadow: 0 0 24px rgba(220,30,30,0.5), 0 0 60px rgba(220,30,30,0.2), inset 0 0 20px rgba(220,30,30,0.08);
+  }
+  .layer img {
+    display: block;
+    pointer-events: none;
+  }
+
+  /* Properties panel */
+  .props {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  .props.hidden { display: none; }
+  .props-title {
     font-size: 11px;
     letter-spacing: 3px;
     color: var(--muted);
     text-transform: uppercase;
     margin-bottom: 10px;
     font-weight: 600;
-  }
-
-  .blocks-editor {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .block-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 14px 14px 16px;
-    display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 12px;
-    position: relative;
   }
-
-  .block-card .drag-handle {
-    color: #444;
-    font-size: 18px;
-    cursor: grab;
-    user-select: none;
-    flex-shrink: 0;
+  .props-title .dup-del {
+    display: flex; gap: 6px;
   }
-
-  .block-fields {
-    flex: 1;
-    display: flex;
-    gap: 10px;
-    min-width: 0;
+  .props-title button {
+    background: #222;
+    border: 1px solid #333;
+    color: #aaa;
+    border-radius: 5px;
+    padding: 4px 8px;
+    font-size: 11px;
+    cursor: pointer;
   }
+  .props-title button.danger { color: #ff6b6b; border-color: #552020; }
+  .props-title button:hover { border-color: var(--red); color: #fff; }
 
-  .block-fields .field {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .block-fields label {
-    display: block;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 5px;
-    font-weight: 600;
-  }
-
-  .block-fields input {
+  .props textarea, .props input[type=text], .props input[type=url] {
     width: 100%;
     background: #0d0d0d;
     border: 1px solid var(--border);
     border-radius: 6px;
     color: var(--text);
-    font-size: 14px;
-    padding: 9px 10px;
+    font-size: 13px;
+    padding: 8px 10px;
+    font-family: inherit;
+    resize: vertical;
+    margin-bottom: 10px;
   }
+  .props textarea { min-height: 52px; font-family: 'Bebas Neue', monospace; letter-spacing: 1px; }
+  .props textarea:focus, .props input:focus { outline: none; border-color: var(--red); }
 
-  .block-fields input:focus {
-    outline: none;
-    border-color: var(--red);
+  .prop-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 10px;
+    margin-bottom: 8px;
   }
-
-  .block-fields input.value-input {
-    font-family: 'Bebas Neue', Georgia, serif;
-    font-size: 18px;
-    letter-spacing: 1px;
+  .prop-grid.three { grid-template-columns: repeat(3, 1fr); }
+  .prop {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
-
-  .remove-btn {
-    background: none;
-    border: 1px solid #333;
-    color: #555;
-    border-radius: 6px;
-    width: 32px; height: 32px;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.15s;
+  .prop label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    font-weight: 600;
   }
-
-  .remove-btn:hover { border-color: var(--red); color: var(--red); }
-
-  .add-block-btn {
+  .prop input[type=number] {
+    background: #0d0d0d;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-size: 13px;
+    padding: 6px 8px;
+    font-family: inherit;
+  }
+  .prop select {
+    background: #0d0d0d;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--text);
+    font-size: 13px;
+    padding: 6px 8px;
+    font-family: inherit;
+  }
+  .prop input[type=color] {
     width: 100%;
+    height: 30px;
+    background: #0d0d0d;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 2px;
+  }
+  .prop-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #0d0d0d;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #ddd;
+  }
+  .prop-check input { accent-color: var(--red); }
+
+  /* Add buttons + ticker editor */
+  .add-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .add-btn {
+    flex: 1;
+    min-width: 120px;
     background: none;
     border: 1px dashed #333;
     border-radius: 10px;
-    color: #555;
+    color: #888;
     padding: 12px;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
-    transition: all 0.15s;
-    margin-bottom: 24px;
+    letter-spacing: 1px;
   }
+  .add-btn:hover { border-color: var(--red); color: var(--red); }
 
-  .add-block-btn:hover { border-color: var(--red); color: var(--red); }
-
-  /* Ticker editor */
-  .ticker-card {
+  .ticker-editor {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 14px 16px;
-    margin-bottom: 24px;
+    padding: 14px;
+    margin-bottom: 14px;
   }
-
-  .ticker-card label {
-    display: block;
-    font-size: 10px;
-    letter-spacing: 2px;
+  .ticker-editor .th {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .ticker-editor label {
+    font-size: 11px;
+    letter-spacing: 3px;
     color: var(--muted);
     text-transform: uppercase;
-    margin-bottom: 8px;
     font-weight: 600;
   }
-
-  .ticker-card input {
+  .ticker-editor .toggle {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: #ddd; cursor: pointer;
+  }
+  .ticker-editor textarea {
     width: 100%;
     background: #0d0d0d;
     border: 1px solid var(--border);
     border-radius: 6px;
     color: var(--text);
-    font-size: 14px;
-    padding: 10px 12px;
-    font-family: 'Bebas Neue', Georgia, serif;
-    letter-spacing: 2px;
-  }
-
-  .ticker-card input:focus {
-    outline: none;
-    border-color: var(--red);
-  }
-
-  /* Save button */
-  .save-btn {
-    width: 100%;
-    background: var(--red);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 16px;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: opacity 0.15s;
-  }
-
-  .save-btn:hover { opacity: 0.85; }
-  .save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .status {
-    text-align: center;
     font-size: 13px;
-    margin-top: 12px;
-    min-height: 20px;
-    color: var(--muted);
+    padding: 9px 10px;
+    font-family: 'Bebas Neue', monospace;
+    letter-spacing: 2px;
+    min-height: 48px;
+    resize: vertical;
   }
 
-  .status.ok  { color: #4caf50; }
-  .status.err { color: var(--red); }
+  .section-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin: 14px 0 8px;
+    font-weight: 600;
+  }
+
+  .help {
+    font-size: 11px;
+    color: #666;
+    padding: 10px 12px;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .help b { color: #aaa; }
 </style>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <header>
   <div class="logo">B</div>
   <div>
-    <h1>Lower Third Editor</h1>
-    <p>Baseline Bar &amp; Grille · Updates live on screen in ~30s</p>
+    <h1>Ad Editor</h1>
+    <p>Drag text anywhere · double-tap to edit · saves live to GitHub</p>
   </div>
 </header>
 
-<!-- GitHub Token -->
-<div class="token-row">
-  <label>GitHub Token</label>
-  <input type="password" id="ghToken" placeholder="ghp_..." autocomplete="off">
+<div class="topbar">
+  <input type="password" id="ghToken" placeholder="ghp_... GitHub token" autocomplete="off">
+  <button class="save-btn" id="saveBtn" onclick="save()">Save</button>
+</div>
+<div class="status" id="status"></div>
+
+<div class="help">
+  <b>Tap</b> a text layer to select · <b>drag</b> to move · <b>double-tap</b> to edit text · use the panel below to change font size, color, etc.
 </div>
 
-<!-- Live Preview -->
-<div class="preview-wrap">
-  <div class="preview-label">Live Preview</div>
-  <div class="preview">
-    <div class="preview-blocks" id="previewBlocks"></div>
-    <div class="preview-ticker">
-      <div class="preview-ticker-inner" id="previewTicker"></div>
+<!-- Live ad preview with draggable text -->
+<div class="stage-wrap">
+  <div class="stage-label">
+    <span>Live Ad Preview</span>
+    <span class="stage-hint">800 × 400</span>
+  </div>
+  <div class="stage" id="stage">
+    <div class="ad" id="ad">
+      <div class="ad-bg">
+        <div class="left-panel"></div>
+        <div class="right-panel">
+          <canvas id="frameCanvas"></canvas>
+          <div class="ember"></div>
+        </div>
+      </div>
+      <div class="layers" id="layers"></div>
+      <div class="ticker-bar" id="tickerBar" style="bottom:0;">
+        <div class="ticker-bar-inner" id="tickerBarInner"></div>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Info Blocks -->
-<div class="section-title">Info Blocks</div>
-<div class="blocks-editor" id="blocksEditor"></div>
-<button class="add-block-btn" onclick="addBlock()">+ Add Block</button>
-
-<!-- Ticker -->
-<div class="section-title">Scrolling Ticker Text</div>
-<div class="ticker-card">
-  <label>Ticker (scrolls across the red bar)</label>
-  <input type="text" id="tickerInput" placeholder="BINGO NIGHT  •  TRIVIA NIGHT  •  HAPPY HOUR 4–6PM">
+<!-- Properties panel (shown when layer selected) -->
+<div class="props hidden" id="propsPanel">
+  <div class="props-title">
+    <span id="propsTitle">Layer</span>
+    <div class="dup-del">
+      <button onclick="duplicateLayer()">Duplicate</button>
+      <button class="danger" onclick="deleteLayer()">Delete</button>
+    </div>
+  </div>
+  <div id="propsBody"></div>
 </div>
 
-<button class="save-btn" id="saveBtn" onclick="save()">Save &amp; Publish</button>
-<div class="status" id="status"></div>
+<!-- Add buttons -->
+<div class="add-row">
+  <button class="add-btn" onclick="addTextLayer()">+ Add Text</button>
+  <button class="add-btn" onclick="addImageLayer()">+ Add Image</button>
+</div>
+
+<!-- Ticker editor -->
+<div class="ticker-editor">
+  <div class="th">
+    <label>Scrolling Ticker</label>
+    <label class="toggle">
+      <input type="checkbox" id="tickerEnabled" checked onchange="syncTicker()">
+      Enabled
+    </label>
+  </div>
+  <textarea id="tickerInput" placeholder="BINGO NIGHT • TRIVIA NIGHT • HAPPY HOUR 4–6PM" oninput="syncTicker()"></textarea>
+</div>
 
 <script>
 const OWNER  = 'Pickletester';
@@ -379,133 +530,499 @@ const REPO   = 'test-ad';
 const BRANCH = 'main';
 const PATH   = 'lower-third.json';
 
-// ── State ──────────────────────────────────────────────
-let blocks = [
-  { label: 'HOURS',       value: 'TUE – SAT  11AM – 10PM' },
-  { label: 'HAPPY HOUR',  value: 'TUE – FRI  4 – 6 PM'    },
-  { label: 'TONIGHT',     value: 'TRIVIA NIGHT'             },
-];
-let ticker = 'BINGO NIGHT  •  TRIVIA NIGHT  •  SPORTS NIGHT  •  HAPPY HOUR TUE–FRI 4–6PM  •  OPEN TO THE PUBLIC';
+/* ═══════════════════════════════════════════
+   BURGER ANIMATION (same as sign)
+═══════════════════════════════════════════ */
+const BASE_URL    = 'https://pickletester.github.io/test-ad/Frames/';
+const FRAME_COUNT = 145;
+const FPS         = 18;
+const INTERVAL_MS = 1000 / FPS;
+const canvas = document.getElementById('frameCanvas');
+const ctx    = canvas.getContext('2d');
 
-// ── Load existing config from GitHub ──────────────────
+function sizeCanvas() {
+  const w = canvas.offsetWidth, h = canvas.offsetHeight;
+  canvas.width  = w > 0 ? w : 410;
+  canvas.height = h > 0 ? h : 400;
+}
+requestAnimationFrame(() => { sizeCanvas(); window.addEventListener('resize', sizeCanvas); startLoading(); });
+
+function frameUrl(n) {
+  return `${BASE_URL}Gen-4_5_-_burger_in_fire_gen-4_5_-_burger_in_fire__1__${String(n).padStart(3,'0')}.jpg`;
+}
+const frames = new Array(FRAME_COUNT).fill(null);
+let loopStarted = false;
+function startLoopIfNeeded() { if (!loopStarted && frames[0]) { loopStarted = true; requestAnimationFrame(tick); } }
+function startLoading() {
+  for (let i = 0; i < FRAME_COUNT; i++) {
+    const img = new Image();
+    img.onload  = () => { frames[i] = img; startLoopIfNeeded(); };
+    img.onerror = () => { startLoopIfNeeded(); };
+    img.src = frameUrl(i + 1);
+  }
+}
+function drawFrame(img) {
+  if (!img) return;
+  const cw = canvas.width, ch = canvas.height;
+  const iw = img.naturalWidth || 1, ih = img.naturalHeight || 1;
+  const scale = Math.max(cw / iw, ch / ih);
+  const dw = iw * scale, dh = ih * scale;
+  ctx.clearRect(0, 0, cw, ch);
+  ctx.drawImage(img, (cw - dw) / 2, (ch - dh) * 0.25, dw, dh);
+}
+let frameIdx = 0, lastTime = 0;
+function tick(ts) {
+  requestAnimationFrame(tick);
+  if (ts - lastTime < INTERVAL_MS) return;
+  lastTime = ts;
+  let safeIdx = frameIdx;
+  for (let i = 0; i < FRAME_COUNT; i++) {
+    const idx = (frameIdx + i) % FRAME_COUNT;
+    if (frames[idx]) { safeIdx = idx; break; }
+  }
+  drawFrame(frames[safeIdx]);
+  frameIdx = (safeIdx + 1) % FRAME_COUNT;
+}
+
+/* ═══════════════════════════════════════════
+   STAGE SCALING (fit the 800×400 ad to the container)
+═══════════════════════════════════════════ */
+const stage = document.getElementById('stage');
+const adEl  = document.getElementById('ad');
+function fitStage() {
+  const sw = stage.clientWidth;
+  const sh = stage.clientHeight;
+  const scale = Math.min(sw / 800, sh / 400);
+  adEl.style.transform = `scale(${scale})`;
+}
+window.addEventListener('resize', fitStage);
+// Fit after fonts & layout settle
+setTimeout(fitStage, 30);
+setTimeout(fitStage, 200);
+new ResizeObserver(fitStage).observe(stage);
+
+/* ═══════════════════════════════════════════
+   STATE (layers + ticker)
+═══════════════════════════════════════════ */
+const DEFAULTS = {
+  version: 2,
+  ticker: {
+    enabled: true,
+    text: 'BINGO NIGHT  •  TRIVIA NIGHT  •  SPORTS NIGHT  •  HAPPY HOUR TUE–FRI 4–6PM  •  OPEN TO THE PUBLIC'
+  },
+  layers: [
+    { id: 'brand', type: 'text', text: 'BASELINE\nBAR & GRILLE',
+      x: 20, y: 110, fontFamily: 'bebas', fontSize: 72, color: '#ffffff',
+      letterSpacing: 1, lineHeight: 0.88, textAlign: 'center', width: 370, frame: false,
+      textShadow: '2px 3px 8px rgba(0,0,0,0.8)' },
+    { id: 'inside', type: 'text', text: 'INSIDE',
+      x: 110, y: 270, fontFamily: 'barlow', fontSize: 21, color: '#ffffff',
+      letterSpacing: 4, lineHeight: 1, textAlign: 'left', fontWeight: 700, width: 0, frame: false },
+    { id: 'levelup', type: 'image',
+      src: 'https://pickletester.github.io/test-ad/Logo%20LevelUP.png',
+      x: 210, y: 262, width: 100, height: 42 },
+    { id: 'public', type: 'text', text: 'OPEN\nTO THE\nPUBLIC',
+      x: 620, y: 22, fontFamily: 'bebas', fontSize: 32, color: '#ffffff',
+      letterSpacing: 3, lineHeight: 1, textAlign: 'center', width: 0, frame: true,
+      textShadow: '0 0 16px rgba(255,50,50,0.7), 0 0 40px rgba(255,50,50,0.3)' },
+    { id: 'hoursLabel', type: 'text', text: 'HOURS',
+      x: 40, y: 305, fontFamily: 'barlow', fontSize: 10, color: '#e02020',
+      letterSpacing: 4, lineHeight: 1, textAlign: 'left', fontWeight: 700, width: 0, frame: false },
+    { id: 'hoursValue', type: 'text', text: 'TUE – SAT  11AM – 10PM',
+      x: 40, y: 322, fontFamily: 'bebas', fontSize: 24, color: '#ffffff',
+      letterSpacing: 2, lineHeight: 1, textAlign: 'left', width: 0, frame: false },
+    { id: 'hhLabel', type: 'text', text: 'HAPPY HOUR',
+      x: 290, y: 305, fontFamily: 'barlow', fontSize: 10, color: '#e02020',
+      letterSpacing: 4, lineHeight: 1, textAlign: 'left', fontWeight: 700, width: 0, frame: false },
+    { id: 'hhValue', type: 'text', text: 'TUE – FRI  4 – 6 PM',
+      x: 290, y: 322, fontFamily: 'bebas', fontSize: 24, color: '#ffffff',
+      letterSpacing: 2, lineHeight: 1, textAlign: 'left', width: 0, frame: false },
+    { id: 'tonightLabel', type: 'text', text: 'TONIGHT',
+      x: 540, y: 305, fontFamily: 'barlow', fontSize: 10, color: '#e02020',
+      letterSpacing: 4, lineHeight: 1, textAlign: 'left', fontWeight: 700, width: 0, frame: false },
+    { id: 'tonightValue', type: 'text', text: 'TRIVIA NIGHT',
+      x: 540, y: 322, fontFamily: 'bebas', fontSize: 24, color: '#ffffff',
+      letterSpacing: 2, lineHeight: 1, textAlign: 'left', width: 0, frame: false }
+  ]
+};
+
+let state = JSON.parse(JSON.stringify(DEFAULTS));
+let selectedId = null;
+
+/* ═══════════════════════════════════════════
+   LOAD from GitHub (migrate old schema if needed)
+═══════════════════════════════════════════ */
 async function loadFromGitHub() {
   try {
-    const res = await fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${PATH}?v=${Date.now()}`);
-    if (!res.ok) return;
+    const res = await fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${PATH}?v=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) { renderAll(); return; }
     const data = await res.json();
-    if (data.blocks)  blocks = data.blocks;
-    else blocks = [
-      { label: data.leftLabel,   value: data.leftValue   },
-      { label: data.centerLabel, value: data.centerValue },
-      { label: data.rightLabel,  value: data.rightValue  },
-    ].filter(b => b.label || b.value);
-    if (data.ticker) ticker = data.ticker;
-    renderEditor();
-  } catch(e) {}
+    if (data.version === 2 && Array.isArray(data.layers)) {
+      state = { ...DEFAULTS, ...data };
+    } else {
+      // Migrate old schema: keep defaults, override ticker if present
+      if (data.ticker) {
+        state.ticker = { enabled: true, text: typeof data.ticker === 'string' ? data.ticker : (data.ticker.text || '') };
+      }
+    }
+  } catch(e) {
+    // keep defaults
+  }
+  renderAll();
 }
 
-// ── Render editor ──────────────────────────────────────
-function renderEditor() {
-  const container = document.getElementById('blocksEditor');
-  container.innerHTML = '';
-  blocks.forEach((b, i) => {
+/* ═══════════════════════════════════════════
+   RENDER
+═══════════════════════════════════════════ */
+const layersEl = document.getElementById('layers');
+const tickerBarEl = document.getElementById('tickerBar');
+const tickerBarInner = document.getElementById('tickerBarInner');
+const tickerInput = document.getElementById('tickerInput');
+const tickerEnabled = document.getElementById('tickerEnabled');
+
+function fontStack(f) {
+  if (f === 'bebas')  return "'Bebas Neue', sans-serif";
+  if (f === 'barlow') return "'Barlow Condensed', sans-serif";
+  if (f === 'serif')  return "Georgia, serif";
+  return "system-ui, sans-serif";
+}
+
+function renderLayers() {
+  layersEl.innerHTML = '';
+  state.layers.forEach(l => {
     const div = document.createElement('div');
-    div.className = 'block-card';
-    div.innerHTML = `
-      <div class="drag-handle">⠿</div>
-      <div class="block-fields">
-        <div class="field">
-          <label>Label</label>
-          <input type="text" value="${esc(b.label)}" oninput="blocks[${i}].label=this.value;updatePreview()" placeholder="e.g. HOURS">
-        </div>
-        <div class="field">
-          <label>Value</label>
-          <input type="text" class="value-input" value="${esc(b.value)}" oninput="blocks[${i}].value=this.value;updatePreview()" placeholder="e.g. TUE–SAT 11AM–10PM">
-        </div>
+    div.className = 'layer' + (l.frame ? ' framed' : '') + (l.id === selectedId ? ' selected' : '');
+    div.dataset.id = l.id;
+    div.style.left = l.x + 'px';
+    div.style.top  = l.y + 'px';
+
+    if (l.type === 'image') {
+      const img = document.createElement('img');
+      img.src = l.src;
+      img.style.width  = (l.width  || 100) + 'px';
+      img.style.height = (l.height || 'auto') === 'auto' ? 'auto' : l.height + 'px';
+      div.appendChild(img);
+    } else {
+      const inner = document.createElement('div');
+      inner.className = 'text-inner';
+      inner.style.fontFamily    = fontStack(l.fontFamily);
+      inner.style.fontSize      = (l.fontSize || 24) + 'px';
+      inner.style.color         = l.color || '#ffffff';
+      inner.style.letterSpacing = (l.letterSpacing || 0) + 'px';
+      inner.style.lineHeight    = (l.lineHeight || 1);
+      inner.style.textAlign     = l.textAlign || 'left';
+      inner.style.fontWeight    = l.fontWeight || 400;
+      if (l.width && l.width > 0) inner.style.width = l.width + 'px';
+      if (l.textShadow) inner.style.textShadow = l.textShadow;
+      inner.textContent = l.text || '';
+      div.appendChild(inner);
+    }
+
+    attachLayerHandlers(div, l);
+    layersEl.appendChild(div);
+  });
+}
+
+function renderTicker() {
+  tickerBarEl.classList.toggle('hidden', !state.ticker.enabled);
+  const t = state.ticker.text || '';
+  tickerBarInner.innerHTML = `<span class="ticker-bar-text">${escHtml(t)}</span><span class="ticker-bar-text">${escHtml(t)}</span>`;
+  tickerInput.value = t;
+  tickerEnabled.checked = !!state.ticker.enabled;
+}
+
+function renderProps() {
+  const panel = document.getElementById('propsPanel');
+  const body  = document.getElementById('propsBody');
+  const title = document.getElementById('propsTitle');
+  const l = state.layers.find(x => x.id === selectedId);
+  if (!l) { panel.classList.add('hidden'); return; }
+  panel.classList.remove('hidden');
+  title.textContent = (l.type === 'image' ? 'Image Layer' : 'Text Layer');
+
+  if (l.type === 'image') {
+    body.innerHTML = `
+      <input type="url" value="${escAttr(l.src)}" oninput="updateProp('src', this.value)" placeholder="Image URL">
+      <div class="prop-grid three">
+        <div class="prop"><label>X</label><input type="number" value="${l.x}" oninput="updateProp('x', +this.value)"></div>
+        <div class="prop"><label>Y</label><input type="number" value="${l.y}" oninput="updateProp('y', +this.value)"></div>
+        <div class="prop"><label>Width</label><input type="number" value="${l.width||100}" oninput="updateProp('width', +this.value)"></div>
       </div>
-      <button class="remove-btn" onclick="removeBlock(${i})">×</button>
+      <div class="prop-grid">
+        <div class="prop"><label>Height (0 = auto)</label><input type="number" value="${typeof l.height==='number'?l.height:0}" oninput="updateProp('height', +this.value)"></div>
+      </div>
     `;
-    container.appendChild(div);
+    return;
+  }
+
+  // Text layer
+  body.innerHTML = `
+    <textarea rows="2" oninput="updateProp('text', this.value)" placeholder="Enter text…">${escHtml(l.text || '')}</textarea>
+    <div class="prop-grid three">
+      <div class="prop"><label>X</label><input type="number" value="${l.x}" oninput="updateProp('x', +this.value)"></div>
+      <div class="prop"><label>Y</label><input type="number" value="${l.y}" oninput="updateProp('y', +this.value)"></div>
+      <div class="prop"><label>Size</label><input type="number" value="${l.fontSize||24}" oninput="updateProp('fontSize', +this.value)"></div>
+    </div>
+    <div class="prop-grid">
+      <div class="prop"><label>Font</label>
+        <select onchange="updateProp('fontFamily', this.value)">
+          <option value="bebas"  ${l.fontFamily==='bebas'?'selected':''}>Bebas Neue</option>
+          <option value="barlow" ${l.fontFamily==='barlow'?'selected':''}>Barlow Condensed</option>
+          <option value="serif"  ${l.fontFamily==='serif'?'selected':''}>Serif</option>
+          <option value="sans"   ${l.fontFamily==='sans'?'selected':''}>Sans</option>
+        </select>
+      </div>
+      <div class="prop"><label>Color</label><input type="color" value="${l.color||'#ffffff'}" oninput="updateProp('color', this.value)"></div>
+    </div>
+    <div class="prop-grid three">
+      <div class="prop"><label>Letter&nbsp;Sp.</label><input type="number" step="0.5" value="${l.letterSpacing||0}" oninput="updateProp('letterSpacing', +this.value)"></div>
+      <div class="prop"><label>Line&nbsp;Ht.</label><input type="number" step="0.05" value="${l.lineHeight||1}" oninput="updateProp('lineHeight', +this.value)"></div>
+      <div class="prop"><label>Weight</label>
+        <select onchange="updateProp('fontWeight', +this.value)">
+          <option value="400" ${(l.fontWeight||400)==400?'selected':''}>400</option>
+          <option value="600" ${(l.fontWeight||400)==600?'selected':''}>600</option>
+          <option value="700" ${(l.fontWeight||400)==700?'selected':''}>700</option>
+          <option value="900" ${(l.fontWeight||400)==900?'selected':''}>900</option>
+        </select>
+      </div>
+    </div>
+    <div class="prop-grid three">
+      <div class="prop"><label>Align</label>
+        <select onchange="updateProp('textAlign', this.value)">
+          <option value="left"   ${l.textAlign==='left'?'selected':''}>Left</option>
+          <option value="center" ${l.textAlign==='center'?'selected':''}>Center</option>
+          <option value="right"  ${l.textAlign==='right'?'selected':''}>Right</option>
+        </select>
+      </div>
+      <div class="prop"><label>Box&nbsp;Width</label><input type="number" value="${l.width||0}" oninput="updateProp('width', +this.value)" placeholder="0 = auto"></div>
+      <label class="prop-check" style="align-self:end;">
+        <input type="checkbox" ${l.frame?'checked':''} onchange="updateProp('frame', this.checked)">
+        Red Frame
+      </label>
+    </div>
+  `;
+}
+
+function renderAll() {
+  renderLayers();
+  renderTicker();
+  renderProps();
+}
+
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escAttr(s) {
+  return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+}
+
+/* ═══════════════════════════════════════════
+   LAYER INTERACTIONS
+═══════════════════════════════════════════ */
+function selectLayer(id) {
+  selectedId = id;
+  renderLayers();
+  renderProps();
+}
+
+function attachLayerHandlers(el, layer) {
+  let dragState = null;
+  let lastTap = 0;
+  let moved = false;
+
+  el.addEventListener('pointerdown', (e) => {
+    if (el.classList.contains('editing')) return; // don't drag while editing
+    e.preventDefault();
+    e.stopPropagation();
+    selectLayer(layer.id);
+    el.setPointerCapture(e.pointerId);
+    moved = false;
+    const adRect = adEl.getBoundingClientRect();
+    const scale = adRect.width / 800;
+    dragState = {
+      startClientX: e.clientX,
+      startClientY: e.clientY,
+      startX: layer.x,
+      startY: layer.y,
+      scale
+    };
   });
 
-  document.getElementById('tickerInput').value = ticker;
-  updatePreview();
-}
-
-function esc(str) {
-  return (str || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-}
-
-function addBlock() {
-  blocks.push({ label: '', value: '' });
-  renderEditor();
-}
-
-function removeBlock(i) {
-  blocks.splice(i, 1);
-  renderEditor();
-}
-
-// ── Live preview ──────────────────────────────────────
-function updatePreview() {
-  // Sync ticker input → state
-  ticker = document.getElementById('tickerInput').value;
-
-  // Blocks
-  const pb = document.getElementById('previewBlocks');
-  pb.innerHTML = '';
-  blocks.forEach(b => {
-    const d = document.createElement('div');
-    d.className = 'preview-block';
-    d.innerHTML = `<div class="pl">${b.label||''}</div><div class="pv">${b.value||'&nbsp;'}</div>`;
-    pb.appendChild(d);
+  el.addEventListener('pointermove', (e) => {
+    if (!dragState) return;
+    const dx = (e.clientX - dragState.startClientX) / dragState.scale;
+    const dy = (e.clientY - dragState.startClientY) / dragState.scale;
+    if (Math.abs(dx) > 1 || Math.abs(dy) > 1) moved = true;
+    layer.x = Math.round(dragState.startX + dx);
+    layer.y = Math.round(dragState.startY + dy);
+    el.style.left = layer.x + 'px';
+    el.style.top  = layer.y + 'px';
+    renderProps(); // update X/Y inputs
   });
 
-  // Ticker
-  document.getElementById('previewTicker').textContent = (ticker + '   •   ' + ticker);
+  el.addEventListener('pointerup', (e) => {
+    if (!dragState) return;
+    try { el.releasePointerCapture(e.pointerId); } catch(_){}
+    dragState = null;
+    // Double-tap detection
+    const now = Date.now();
+    if (!moved && now - lastTap < 350 && layer.type === 'text') {
+      enterEditMode(el, layer);
+    }
+    lastTap = moved ? 0 : now;
+  });
+
+  el.addEventListener('dblclick', (e) => {
+    e.preventDefault();
+    if (layer.type === 'text') enterEditMode(el, layer);
+  });
 }
 
-document.getElementById('tickerInput').addEventListener('input', updatePreview);
+function enterEditMode(el, layer) {
+  if (el.classList.contains('editing')) return;
+  const inner = el.querySelector('.text-inner');
+  if (!inner) return;
+  el.classList.add('editing');
+  inner.contentEditable = 'true';
+  inner.focus();
+  // Select all
+  const r = document.createRange();
+  r.selectNodeContents(inner);
+  const s = window.getSelection();
+  s.removeAllRanges(); s.addRange(r);
 
-// ── Save to GitHub ────────────────────────────────────
+  const finish = (save) => {
+    inner.contentEditable = 'false';
+    el.classList.remove('editing');
+    if (save) {
+      layer.text = inner.innerText;
+    }
+    inner.textContent = layer.text; // normalize
+    renderProps();
+  };
+
+  inner.addEventListener('blur', () => finish(true), { once: true });
+  inner.addEventListener('keydown', function onKey(e) {
+    if (e.key === 'Escape') { inner.removeEventListener('keydown', onKey); finish(false); inner.blur(); }
+    if (e.key === 'Enter' && !e.shiftKey) { /* allow newline with shift; otherwise commit */
+      if (!e.shiftKey) { e.preventDefault(); inner.removeEventListener('keydown', onKey); finish(true); inner.blur(); }
+    }
+  });
+}
+
+// Click outside → deselect
+document.getElementById('stage').addEventListener('pointerdown', (e) => {
+  if (e.target.closest('.layer')) return;
+  selectedId = null;
+  renderLayers();
+  renderProps();
+});
+
+/* ═══════════════════════════════════════════
+   PROPERTY UPDATES
+═══════════════════════════════════════════ */
+function updateProp(key, value) {
+  const l = state.layers.find(x => x.id === selectedId);
+  if (!l) return;
+  l[key] = value;
+  renderLayers();
+  // Don't re-render props (would blow away focus); numeric/X/Y inputs stay in sync via pointermove
+}
+
+function addTextLayer() {
+  const id = 'text_' + Date.now().toString(36);
+  state.layers.push({
+    id, type: 'text', text: 'NEW TEXT',
+    x: 200, y: 180, fontFamily: 'bebas', fontSize: 36, color: '#ffffff',
+    letterSpacing: 2, lineHeight: 1, textAlign: 'left', fontWeight: 400, width: 0, frame: false
+  });
+  selectedId = id;
+  renderAll();
+}
+
+function addImageLayer() {
+  const url = prompt('Image URL:', 'https://pickletester.github.io/test-ad/Logo%20LevelUP.png');
+  if (!url) return;
+  const id = 'img_' + Date.now().toString(36);
+  state.layers.push({ id, type: 'image', src: url, x: 300, y: 180, width: 120, height: 0 });
+  selectedId = id;
+  renderAll();
+}
+
+function duplicateLayer() {
+  const l = state.layers.find(x => x.id === selectedId);
+  if (!l) return;
+  const copy = JSON.parse(JSON.stringify(l));
+  copy.id = (l.type === 'image' ? 'img_' : 'text_') + Date.now().toString(36);
+  copy.x += 20; copy.y += 20;
+  state.layers.push(copy);
+  selectedId = copy.id;
+  renderAll();
+}
+
+function deleteLayer() {
+  state.layers = state.layers.filter(x => x.id !== selectedId);
+  selectedId = null;
+  renderAll();
+}
+
+document.addEventListener('keydown', (e) => {
+  if (!selectedId) return;
+  // Ignore if focus is in an input / editable field
+  const tag = (document.activeElement && document.activeElement.tagName) || '';
+  if (['INPUT','TEXTAREA','SELECT'].includes(tag)) return;
+  if (document.activeElement && document.activeElement.isContentEditable) return;
+  if (e.key === 'Delete' || e.key === 'Backspace') {
+    e.preventDefault(); deleteLayer();
+  } else if (e.key === 'ArrowLeft')  { const l=getSel(); if(l){l.x--;renderLayers();renderProps();} }
+  else   if (e.key === 'ArrowRight') { const l=getSel(); if(l){l.x++;renderLayers();renderProps();} }
+  else   if (e.key === 'ArrowUp')    { const l=getSel(); if(l){l.y--;renderLayers();renderProps();} }
+  else   if (e.key === 'ArrowDown')  { const l=getSel(); if(l){l.y++;renderLayers();renderProps();} }
+});
+function getSel(){ return state.layers.find(x=>x.id===selectedId); }
+
+/* ═══════════════════════════════════════════
+   TICKER
+═══════════════════════════════════════════ */
+function syncTicker() {
+  state.ticker.enabled = tickerEnabled.checked;
+  state.ticker.text    = tickerInput.value;
+  renderTicker();
+}
+
+/* ═══════════════════════════════════════════
+   SAVE TO GITHUB
+═══════════════════════════════════════════ */
 async function save() {
   const token = document.getElementById('ghToken').value.trim();
-  if (!token) { setStatus('Enter your GitHub token first.', 'err'); return; }
-
+  if (!token) return setStatus('Enter your GitHub token first.', 'err');
   const btn = document.getElementById('saveBtn');
   btn.disabled = true;
   setStatus('Saving…', '');
 
-  const payload = { blocks, ticker };
+  // Keep old keys for back-compat with any other consumer
+  const payload = {
+    version: 2,
+    layers: state.layers,
+    ticker: state.ticker
+  };
 
   try {
-    // Get current sha
     const meta = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
-
     let sha;
-    if (meta.ok) {
-      const j = await meta.json();
-      sha = j.sha;
-    }
-
+    if (meta.ok) { const j = await meta.json(); sha = j.sha; }
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
-    const body = { message: 'update lower third', content, branch: BRANCH };
+    const body = { message: 'update ad layers', content, branch: BRANCH };
     if (sha) body.sha = sha;
-
     const put = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`, {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
-
-    if (!put.ok) {
-      const e = await put.json();
-      throw new Error(e.message || put.status);
-    }
-
-    setStatus('✓ Saved! Screen will update within 30 seconds.', 'ok');
+    if (!put.ok) { const e = await put.json(); throw new Error(e.message || put.status); }
+    setStatus('✓ Saved! Sign updates within 30s.', 'ok');
   } catch(e) {
     setStatus('Save failed: ' + e.message, 'err');
   } finally {
@@ -516,18 +1033,18 @@ async function save() {
 function setStatus(msg, cls) {
   const el = document.getElementById('status');
   el.textContent = msg;
-  el.className = 'status ' + cls;
+  el.className = 'status ' + (cls || '');
 }
 
-// ── Load token from localStorage if saved ─────────────
+/* ═══════════════════════════════════════════
+   TOKEN PERSISTENCE + INIT
+═══════════════════════════════════════════ */
+const tokenEl = document.getElementById('ghToken');
 const savedToken = localStorage.getItem('bbg_gh_token');
-if (savedToken) document.getElementById('ghToken').value = savedToken;
-document.getElementById('ghToken').addEventListener('change', e => {
-  localStorage.setItem('bbg_gh_token', e.target.value);
-});
+if (savedToken) tokenEl.value = savedToken;
+tokenEl.addEventListener('change', e => localStorage.setItem('bbg_gh_token', e.target.value));
 
-// ── Init ──────────────────────────────────────────────
-loadFromGitHub().then(renderEditor);
+loadFromGitHub();
 </script>
 </body>
 </html>
