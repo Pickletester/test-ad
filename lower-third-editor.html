@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lower Third Editor – Baseline BBG</title>
+<style>
+  :root {
+    --red: #e02020;
+    --dark: #111;
+    --card: #1a1a1a;
+    --border: #2a2a2a;
+    --text: #f0f0f0;
+    --muted: #888;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0d0d0d;
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  header .logo {
+    width: 42px; height: 42px;
+    background: var(--red);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 900; color: #fff;
+    font-family: Georgia, serif;
+    flex-shrink: 0;
+  }
+
+  header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  header p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* GitHub token row */
+  .token-row {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .token-row label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .token-row input {
+    flex: 1;
+    background: #0d0d0d;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 13px;
+    padding: 8px 10px;
+    font-family: monospace;
+  }
+
+  /* Preview banner */
+  .preview-wrap {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .preview-label {
+    background: #1a1a1a;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    padding: 8px 14px;
+    text-transform: uppercase;
+  }
+
+  .preview {
+    background: #000;
+    border-top: 2px solid var(--red);
+    box-shadow: 0 -3px 16px rgba(220,30,30,0.3);
+  }
+
+  .preview-blocks {
+    display: flex;
+    height: 62px;
+    padding: 0 16px;
+    align-items: stretch;
+  }
+
+  .preview-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 12px;
+    min-width: 0;
+  }
+
+  .preview-block + .preview-block {
+    border-left: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .preview-block .pl { font-size: 9px; letter-spacing: 4px; color: var(--red); text-transform: uppercase; font-weight: 700; margin-bottom: 2px; }
+  .preview-block .pv { font-family: 'Bebas Neue', Georgia, serif; font-size: 22px; letter-spacing: 2px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .preview-ticker {
+    height: 34px;
+    background: #cc1a1a;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .preview-ticker-inner {
+    white-space: nowrap;
+    animation: ticker 28s linear infinite;
+    font-size: 15px;
+    letter-spacing: 3px;
+    color: #fff;
+    font-weight: 700;
+    padding-left: 100%;
+  }
+
+  @keyframes ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* Blocks editor */
+  .section-title {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .blocks-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .block-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 14px 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+  }
+
+  .block-card .drag-handle {
+    color: #444;
+    font-size: 18px;
+    cursor: grab;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .block-fields {
+    flex: 1;
+    display: flex;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .block-fields .field {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .block-fields label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+
+  .block-fields input {
+    width: 100%;
+    background: #0d0d0d;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 14px;
+    padding: 9px 10px;
+  }
+
+  .block-fields input:focus {
+    outline: none;
+    border-color: var(--red);
+  }
+
+  .block-fields input.value-input {
+    font-family: 'Bebas Neue', Georgia, serif;
+    font-size: 18px;
+    letter-spacing: 1px;
+  }
+
+  .remove-btn {
+    background: none;
+    border: 1px solid #333;
+    color: #555;
+    border-radius: 6px;
+    width: 32px; height: 32px;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  .remove-btn:hover { border-color: var(--red); color: var(--red); }
+
+  .add-block-btn {
+    width: 100%;
+    background: none;
+    border: 1px dashed #333;
+    border-radius: 10px;
+    color: #555;
+    padding: 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 24px;
+  }
+
+  .add-block-btn:hover { border-color: var(--red); color: var(--red); }
+
+  /* Ticker editor */
+  .ticker-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 24px;
+  }
+
+  .ticker-card label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .ticker-card input {
+    width: 100%;
+    background: #0d0d0d;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 14px;
+    padding: 10px 12px;
+    font-family: 'Bebas Neue', Georgia, serif;
+    letter-spacing: 2px;
+  }
+
+  .ticker-card input:focus {
+    outline: none;
+    border-color: var(--red);
+  }
+
+  /* Save button */
+  .save-btn {
+    width: 100%;
+    background: var(--red);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .save-btn:hover { opacity: 0.85; }
+  .save-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .status {
+    text-align: center;
+    font-size: 13px;
+    margin-top: 12px;
+    min-height: 20px;
+    color: var(--muted);
+  }
+
+  .status.ok  { color: #4caf50; }
+  .status.err { color: var(--red); }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+  <div class="logo">B</div>
+  <div>
+    <h1>Lower Third Editor</h1>
+    <p>Baseline Bar &amp; Grille · Updates live on screen in ~30s</p>
+  </div>
+</header>
+
+<!-- GitHub Token -->
+<div class="token-row">
+  <label>GitHub Token</label>
+  <input type="password" id="ghToken" placeholder="ghp_..." autocomplete="off">
+</div>
+
+<!-- Live Preview -->
+<div class="preview-wrap">
+  <div class="preview-label">Live Preview</div>
+  <div class="preview">
+    <div class="preview-blocks" id="previewBlocks"></div>
+    <div class="preview-ticker">
+      <div class="preview-ticker-inner" id="previewTicker"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Info Blocks -->
+<div class="section-title">Info Blocks</div>
+<div class="blocks-editor" id="blocksEditor"></div>
+<button class="add-block-btn" onclick="addBlock()">+ Add Block</button>
+
+<!-- Ticker -->
+<div class="section-title">Scrolling Ticker Text</div>
+<div class="ticker-card">
+  <label>Ticker (scrolls across the red bar)</label>
+  <input type="text" id="tickerInput" placeholder="BINGO NIGHT  •  TRIVIA NIGHT  •  HAPPY HOUR 4–6PM">
+</div>
+
+<button class="save-btn" id="saveBtn" onclick="save()">Save &amp; Publish</button>
+<div class="status" id="status"></div>
+
+<script>
+const OWNER  = 'Pickletester';
+const REPO   = 'test-ad';
+const BRANCH = 'main';
+const PATH   = 'lower-third.json';
+
+// ── State ──────────────────────────────────────────────
+let blocks = [
+  { label: 'HOURS',       value: 'TUE – SAT  11AM – 10PM' },
+  { label: 'HAPPY HOUR',  value: 'TUE – FRI  4 – 6 PM'    },
+  { label: 'TONIGHT',     value: 'TRIVIA NIGHT'             },
+];
+let ticker = 'BINGO NIGHT  •  TRIVIA NIGHT  •  SPORTS NIGHT  •  HAPPY HOUR TUE–FRI 4–6PM  •  OPEN TO THE PUBLIC';
+
+// ── Load existing config from GitHub ──────────────────
+async function loadFromGitHub() {
+  try {
+    const res = await fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${PATH}?v=${Date.now()}`);
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.blocks)  blocks = data.blocks;
+    else blocks = [
+      { label: data.leftLabel,   value: data.leftValue   },
+      { label: data.centerLabel, value: data.centerValue },
+      { label: data.rightLabel,  value: data.rightValue  },
+    ].filter(b => b.label || b.value);
+    if (data.ticker) ticker = data.ticker;
+    renderEditor();
+  } catch(e) {}
+}
+
+// ── Render editor ──────────────────────────────────────
+function renderEditor() {
+  const container = document.getElementById('blocksEditor');
+  container.innerHTML = '';
+  blocks.forEach((b, i) => {
+    const div = document.createElement('div');
+    div.className = 'block-card';
+    div.innerHTML = `
+      <div class="drag-handle">⠿</div>
+      <div class="block-fields">
+        <div class="field">
+          <label>Label</label>
+          <input type="text" value="${esc(b.label)}" oninput="blocks[${i}].label=this.value;updatePreview()" placeholder="e.g. HOURS">
+        </div>
+        <div class="field">
+          <label>Value</label>
+          <input type="text" class="value-input" value="${esc(b.value)}" oninput="blocks[${i}].value=this.value;updatePreview()" placeholder="e.g. TUE–SAT 11AM–10PM">
+        </div>
+      </div>
+      <button class="remove-btn" onclick="removeBlock(${i})">×</button>
+    `;
+    container.appendChild(div);
+  });
+
+  document.getElementById('tickerInput').value = ticker;
+  updatePreview();
+}
+
+function esc(str) {
+  return (str || '').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+function addBlock() {
+  blocks.push({ label: '', value: '' });
+  renderEditor();
+}
+
+function removeBlock(i) {
+  blocks.splice(i, 1);
+  renderEditor();
+}
+
+// ── Live preview ──────────────────────────────────────
+function updatePreview() {
+  // Sync ticker input → state
+  ticker = document.getElementById('tickerInput').value;
+
+  // Blocks
+  const pb = document.getElementById('previewBlocks');
+  pb.innerHTML = '';
+  blocks.forEach(b => {
+    const d = document.createElement('div');
+    d.className = 'preview-block';
+    d.innerHTML = `<div class="pl">${b.label||''}</div><div class="pv">${b.value||'&nbsp;'}</div>`;
+    pb.appendChild(d);
+  });
+
+  // Ticker
+  document.getElementById('previewTicker').textContent = (ticker + '   •   ' + ticker);
+}
+
+document.getElementById('tickerInput').addEventListener('input', updatePreview);
+
+// ── Save to GitHub ────────────────────────────────────
+async function save() {
+  const token = document.getElementById('ghToken').value.trim();
+  if (!token) { setStatus('Enter your GitHub token first.', 'err'); return; }
+
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  setStatus('Saving…', '');
+
+  const payload = { blocks, ticker };
+
+  try {
+    // Get current sha
+    const meta = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    let sha;
+    if (meta.ok) {
+      const j = await meta.json();
+      sha = j.sha;
+    }
+
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+    const body = { message: 'update lower third', content, branch: BRANCH };
+    if (sha) body.sha = sha;
+
+    const put = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (!put.ok) {
+      const e = await put.json();
+      throw new Error(e.message || put.status);
+    }
+
+    setStatus('✓ Saved! Screen will update within 30 seconds.', 'ok');
+  } catch(e) {
+    setStatus('Save failed: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function setStatus(msg, cls) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status ' + cls;
+}
+
+// ── Load token from localStorage if saved ─────────────
+const savedToken = localStorage.getItem('bbg_gh_token');
+if (savedToken) document.getElementById('ghToken').value = savedToken;
+document.getElementById('ghToken').addEventListener('change', e => {
+  localStorage.setItem('bbg_gh_token', e.target.value);
+});
+
+// ── Init ──────────────────────────────────────────────
+loadFromGitHub().then(renderEditor);
+</script>
+</body>
+</html>
