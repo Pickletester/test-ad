@@ -18,19 +18,15 @@
     /* No opacity hide — layout shows immediately */
   }
 
-  /* Video starts invisible, fades in once loaded */
-  .burger-img {
+  #frameCanvas {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: center 25%;
     display: block;
-    filter: brightness(0.82) contrast(1.18) saturate(1.15);
     pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.4s ease;
+    filter: brightness(0.82) contrast(1.18) saturate(1.15);
   }
-  .burger-img.video-ready { opacity: 1; }
 
   .ad {
     width: 800px;
@@ -352,20 +348,7 @@
 
     <!-- RIGHT -->
     <div class="right">
-      <!-- disableRemotePlayback kills the Cast button at the browser API level -->
-      <!-- x-webkit-airplay="deny" covers Safari/WebKit on some embedded players -->
-      <video
-        class="burger-img"
-        src="https://pub-d884496adff243c08bda3301b36cb50f.r2.dev/Outdoorsign/Gen-4_5%20-%20burger%20in%20fire.gen-4_5%20-%20burger%20in%20fire.mp4"
-        autoplay loop muted playsinline
-        preload="auto"
-        disableRemotePlayback
-        x-webkit-airplay="deny"
-        controlsList="noremoteplayback nofullscreen nodownload"
-      ></video>
-      <!-- Transparent shield div prevents Chrome's Cast hover overlay from activating -->
-      <div class="video-shield"></div>
-
+      <canvas id="frameCanvas"></canvas>
       <div class="ember"></div>
 
       <!-- EVENTS tab -->
@@ -394,38 +377,89 @@
 </div>
 
 <script>
-  const vid = document.querySelector('video');
-  const R2_URL = vid.src;
+  // ── PNG Sequence Player ──────────────────────────────────
+  const BASE_URL    = 'https://pub-d884496adff243c08bda3301b36cb50f.r2.dev/Outdoorsign/Frames/';
+  const FRAME_COUNT = 145;
+  const FPS         = 18;
+  const INTERVAL_MS = 1000 / FPS;
 
-  // Disable remote playback via JS API
-  if (vid.remote) {
-    vid.remote.watchAvailability(() => {}).catch(() => {});
-    try { vid.disableRemotePlayback = true; } catch(e) {}
+  const canvas = document.getElementById('frameCanvas');
+  const ctx    = canvas.getContext('2d');
+
+  function sizeCanvas() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+  sizeCanvas();
+  window.addEventListener('resize', sizeCanvas);
+
+  function frameUrl(n) {
+    const num = String(n).padStart(3, '0');
+    return `${BASE_URL}Gen-4_5_-_burger_in_fire_gen-4_5_-_burger_in_fire_1_${num}.jpg`;
   }
 
-  // Fonts load in background — no need to wait, layout is already visible
-  // Preload full video into a blob so playback is from memory (no stream stutter)
-  fetch(R2_URL)
-    .then(r => r.blob())
-    .then(blob => {
-      const blobUrl = URL.createObjectURL(blob);
-      vid.src = blobUrl;
-      vid.load();
-      const fadeIn = () => vid.classList.add('video-ready');
-      vid.addEventListener('canplaythrough', fadeIn, { once: true });
-      vid.addEventListener('loadeddata', fadeIn, { once: true });
-      vid.play().catch(() => {});
-      // Hard fallback — fade in after 1.5s no matter what
-      setTimeout(fadeIn, 1500);
-    })
-    .catch(() => {
-      // Fetch failed — fall back to direct streaming, fade in on first frame
-      vid.src = R2_URL;
-      vid.load();
-      const fadeIn = () => vid.classList.add('video-ready');
-      vid.addEventListener('loadeddata', fadeIn, { once: true });
-      setTimeout(fadeIn, 1500);
-    });
+  // Preload all frames in parallel into Image objects
+  const frames = new Array(FRAME_COUNT).fill(null);
+  let loadedCount = 0;
+  let loopStarted = false;
+
+  function startLoopIfNeeded() {
+    if (!loopStarted && frames[0]) {
+      loopStarted = true;
+      requestAnimationFrame(tick);
+    }
+  }
+
+  function loadAllFrames() {
+    for (let i = 0; i < FRAME_COUNT; i++) {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        frames[i] = img;
+        loadedCount++;
+        startLoopIfNeeded();
+      };
+      img.onerror = () => {
+        loadedCount++;
+        startLoopIfNeeded();
+      };
+      img.src = frameUrl(i + 1);
+    }
+  }
+
+  // Draw a frame cover-fit into the canvas (same as object-fit:cover object-position:center 25%)
+  function drawFrame(img) {
+    if (!img) return;
+    const cw = canvas.width, ch = canvas.height;
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    const scale = Math.max(cw / iw, ch / ih);
+    const dw = iw * scale, dh = ih * scale;
+    const dx = (cw - dw) / 2;
+    // 25% vertical position (same as object-position: center 25%)
+    const dy = (ch - dh) * 0.25;
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.drawImage(img, dx, dy, dw, dh);
+  }
+
+  // Draw loop — skips frames not yet loaded, loops back if needed
+  let frameIdx = 0;
+  let lastTime = 0;
+
+  function tick(ts) {
+    requestAnimationFrame(tick);
+    if (ts - lastTime < INTERVAL_MS) return;
+    lastTime = ts;
+    // Find next available frame (skip nulls that haven't loaded yet)
+    let safeIdx = frameIdx;
+    for (let i = 0; i < FRAME_COUNT; i++) {
+      const idx = (frameIdx + i) % FRAME_COUNT;
+      if (frames[idx]) { safeIdx = idx; break; }
+    }
+    drawFrame(frames[safeIdx]);
+    frameIdx = (safeIdx + 1) % FRAME_COUNT;
+  }
+
+  loadAllFrames();
 </script>
 </body>
 </html>
