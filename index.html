@@ -15,6 +15,7 @@
     justify-content: center;
     min-height: 100vh;
     font-family: 'Barlow Condensed', sans-serif;
+    /* No opacity hide — layout shows immediately */
   }
 
   #frameCanvas {
@@ -197,6 +198,7 @@
     background: #080000;
   }
 
+  /* Invisible shield over video — also kills Cast hover target */
   .video-shield {
     position: absolute;
     inset: 0;
@@ -333,7 +335,7 @@
         <div class="info-row" style="margin-top:2px; justify-content:center;">
           <div style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:10px 20px 10px 14px;">
             <span style="font-size:20px;letter-spacing:4px;color:#fff;text-transform:uppercase;font-weight:700;border-right:1px solid rgba(255,255,255,0.2);padding-right:16px;white-space:nowrap;">INSIDE</span>
-            <img src="Logo LevelUP.png" alt="LevelUp" style="height:38px;width:auto;object-fit:contain;">
+            <img src="https://pickletester.github.io/test-ad/Logo%20LevelUP.png" alt="LevelUp" style="height:38px;width:auto;object-fit:contain;">
           </div>
         </div>
       </div>
@@ -376,7 +378,7 @@
 
 <script>
   // ── PNG Sequence Player ──────────────────────────────────
-  const BASE_URL    = 'https://pub-d884496adff243c08bda3301b36cb50f.r2.dev/Outdoorsign/Frames/';
+  const BASE_URL    = 'https://pickletester.github.io/test-ad/Frames/';
   const FRAME_COUNT = 145;
   const FPS         = 18;
   const INTERVAL_MS = 1000 / FPS;
@@ -391,10 +393,9 @@
   sizeCanvas();
   window.addEventListener('resize', sizeCanvas);
 
-  // ── FIXED: double underscores around the 1 (__1__) ──
   function frameUrl(n) {
     const num = String(n).padStart(3, '0');
-    return `${BASE_URL}Gen-4_5_-_burger_in_fire_gen-4_5_-_burger_in_fire__1__${num}.jpg`;
+    return `${BASE_URL}Gen-4_5_-_burger_in_fire_gen-4_5_-_burger_in_fire_1_${num}.jpg`;
   }
 
   // Preload all frames in parallel into Image objects
@@ -426,7 +427,7 @@
     }
   }
 
-  // Draw a frame cover-fit into the canvas
+  // Draw a frame cover-fit into the canvas (same as object-fit:cover object-position:center 25%)
   function drawFrame(img) {
     if (!img) return;
     const cw = canvas.width, ch = canvas.height;
@@ -434,11 +435,13 @@
     const scale = Math.max(cw / iw, ch / ih);
     const dw = iw * scale, dh = ih * scale;
     const dx = (cw - dw) / 2;
+    // 25% vertical position (same as object-position: center 25%)
     const dy = (ch - dh) * 0.25;
     ctx.clearRect(0, 0, cw, ch);
     ctx.drawImage(img, dx, dy, dw, dh);
   }
 
+  // Draw loop — skips frames not yet loaded, loops back if needed
   let frameIdx = 0;
   let lastTime = 0;
 
@@ -446,6 +449,7 @@
     requestAnimationFrame(tick);
     if (ts - lastTime < INTERVAL_MS) return;
     lastTime = ts;
+    // Find next available frame (skip nulls that haven't loaded yet)
     let safeIdx = frameIdx;
     for (let i = 0; i < FRAME_COUNT; i++) {
       const idx = (frameIdx + i) % FRAME_COUNT;
