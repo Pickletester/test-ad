@@ -15,7 +15,6 @@
     justify-content: center;
     min-height: 100vh;
     font-family: 'Barlow Condensed', sans-serif;
-    /* No opacity hide — layout shows immediately */
   }
 
   #frameCanvas {
@@ -198,7 +197,6 @@
     background: #080000;
   }
 
-  /* Invisible shield over video — also kills Cast hover target */
   .video-shield {
     position: absolute;
     inset: 0;
@@ -393,9 +391,10 @@
   sizeCanvas();
   window.addEventListener('resize', sizeCanvas);
 
+  // ── FIXED: double underscores around the 1 (__1__) ──
   function frameUrl(n) {
     const num = String(n).padStart(3, '0');
-    return `${BASE_URL}Gen-4_5_-_burger_in_fire_gen-4_5_-_burger_in_fire_1_${num}.jpg`;
+    return `${BASE_URL}Gen-4_5_-_burger_in_fire_gen-4_5_-_burger_in_fire__1__${num}.jpg`;
   }
 
   // Preload all frames in parallel into Image objects
@@ -427,7 +426,7 @@
     }
   }
 
-  // Draw a frame cover-fit into the canvas (same as object-fit:cover object-position:center 25%)
+  // Draw a frame cover-fit into the canvas
   function drawFrame(img) {
     if (!img) return;
     const cw = canvas.width, ch = canvas.height;
@@ -435,13 +434,11 @@
     const scale = Math.max(cw / iw, ch / ih);
     const dw = iw * scale, dh = ih * scale;
     const dx = (cw - dw) / 2;
-    // 25% vertical position (same as object-position: center 25%)
     const dy = (ch - dh) * 0.25;
     ctx.clearRect(0, 0, cw, ch);
     ctx.drawImage(img, dx, dy, dw, dh);
   }
 
-  // Draw loop — skips frames not yet loaded, loops back if needed
   let frameIdx = 0;
   let lastTime = 0;
 
@@ -449,7 +446,6 @@
     requestAnimationFrame(tick);
     if (ts - lastTime < INTERVAL_MS) return;
     lastTime = ts;
-    // Find next available frame (skip nulls that haven't loaded yet)
     let safeIdx = frameIdx;
     for (let i = 0; i < FRAME_COUNT; i++) {
       const idx = (frameIdx + i) % FRAME_COUNT;
