@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <title>Baseline Bar & Grille – LED Ad</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
@@ -37,7 +40,7 @@
     background: #000;
   }
 
-  /* LED scanline */
+  /* LED scanline overlay */
   .ad::after {
     content: '';
     position: absolute;
@@ -57,7 +60,7 @@
   .main-row {
     display: flex;
     flex: 1;
-    height: 300px;
+    min-height: 0;
   }
 
   /* ── LEFT ── */
@@ -68,7 +71,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 24px 20px;
+    padding: 20px 20px;
     position: relative;
     background: #000;
     z-index: 2;
@@ -89,7 +92,7 @@
     line-height: 0.88;
     letter-spacing: 1px;
     text-shadow: 2px 3px 8px rgba(0,0,0,0.8);
-    margin-bottom: 16px;
+    margin-bottom: 18px;
     white-space: nowrap;
     text-align: center;
   }
@@ -99,96 +102,31 @@
     text-shadow: 0 0 20px rgba(220,30,30,0.9), 0 0 50px rgba(220,30,30,0.4);
   }
 
-  .divider {
-    width: 44px;
-    height: 3px;
-    background: #e02020;
-    box-shadow: 0 0 12px rgba(220,30,30,0.9), 0 0 28px rgba(220,30,30,0.5);
-    margin-bottom: 14px;
-    border-radius: 1px;
-  }
-
-  .tagline {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 19px;
-    letter-spacing: 6px;
-    color: rgba(255,255,255,0.4);
-    margin-bottom: 18px;
-  }
-
-  .info-rows {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-    margin-bottom: 18px;
-  }
-
-  .info-row {
+  .inside-badge {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 12px 22px 12px 16px;
   }
 
-  .dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: #e02020;
-    box-shadow: 0 0 8px rgba(220,30,30,1);
-    flex-shrink: 0;
-  }
-
-  .info-text {
-    font-size: 14px;
-    font-weight: 700;
-    color: rgba(255,255,255,0.80);
-    letter-spacing: 0.5px;
-  }
-
-  .info-text .muted {
-    color: rgba(255,255,255,0.36);
-    font-weight: 400;
-    font-size: 13px;
-  }
-
-  .hh-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(220,30,30,0.14);
-    border: 1px solid rgba(220,30,30,0.5);
-    border-radius: 5px;
-    padding: 12px 16px;
-    box-shadow: 0 0 18px rgba(220,30,30,0.18), inset 0 0 18px rgba(220,30,30,0.05);
-    white-space: nowrap;
-    flex-wrap: nowrap;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  @keyframes hh-pulse {
-    0%, 100% { text-shadow: 0 0 10px rgba(255,220,30,0.6); }
-    50% { text-shadow: 0 0 22px rgba(255,220,30,1), 0 0 40px rgba(255,220,30,0.4); }
-  }
-
-  .hh-label {
-    animation: hh-pulse 2.5s ease-in-out infinite;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px;
-    letter-spacing: 2px;
-    color: #ffe033;
-    text-shadow: 0 0 12px rgba(255,220,30,0.8);
-  }
-
-  .hh-sep { width: 1px; height: 18px; background: rgba(220,30,30,0.4); }
-
-  .hh-time {
-    font-size: 20px;
-    font-weight: 900;
+  .inside-badge span {
+    font-size: 21px;
+    letter-spacing: 4px;
     color: #fff;
-    letter-spacing: 1px;
-    text-shadow: 0 0 8px rgba(255,255,255,0.3);
-    font-family: 'Bebas Neue', sans-serif;
+    text-transform: uppercase;
+    font-weight: 700;
+    border-right: 1px solid rgba(255,255,255,0.2);
+    padding-right: 16px;
+    white-space: nowrap;
+  }
+
+  .inside-badge img {
+    height: 42px;
+    width: auto;
+    object-fit: contain;
   }
 
   /* ── RIGHT ── */
@@ -199,7 +137,6 @@
     background: #080000;
   }
 
-  /* left blend fade */
   .right::before {
     content: '';
     position: absolute;
@@ -209,11 +146,10 @@
     pointer-events: none;
   }
 
-  /* bottom fade to black */
   .ember {
     position: absolute;
     bottom: 0; left: 0; right: 0;
-    height: 160px;
+    height: 120px;
     background: linear-gradient(0deg, #000 0%, rgba(0,0,0,0.7) 40%, transparent 100%);
     z-index: 3;
     pointer-events: none;
@@ -222,122 +158,125 @@
   /* ── OPEN TO THE PUBLIC badge ── */
   .public-badge {
     position: absolute;
-    top: 18px;
-    right: 18px;
+    top: 12px;
+    right: 12px;
     z-index: 6;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
   }
 
   .public-inner {
     border: 3px solid rgba(220,30,30,0.85);
     border-radius: 6px;
-    padding: 14px 20px;
+    padding: 12px 18px;
     background: rgba(0,0,0,0.72);
     backdrop-filter: blur(4px);
-    box-shadow:
-      0 0 24px rgba(220,30,30,0.5),
-      0 0 60px rgba(220,30,30,0.2),
-      inset 0 0 20px rgba(220,30,30,0.08);
+    box-shadow: 0 0 24px rgba(220,30,30,0.5), 0 0 60px rgba(220,30,30,0.2), inset 0 0 20px rgba(220,30,30,0.08);
     transform: rotate(-2deg);
+    text-align: center;
   }
 
   .public-main {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 34px;
+    font-size: 32px;
     letter-spacing: 3px;
     color: #fff;
     line-height: 1;
-    text-shadow:
-      0 0 16px rgba(255,50,50,0.7),
-      0 0 40px rgba(255,50,50,0.3);
+    text-shadow: 0 0 16px rgba(255,50,50,0.7), 0 0 40px rgba(255,50,50,0.3);
   }
 
   .public-main .accent {
     color: #ffe033;
-    text-shadow: 0 0 14px rgba(255,220,30,0.7), 0 0 30px rgba(255,220,30,0.35), 0 0 60px rgba(255,220,30,0.15);
     animation: public-pulse 2.5s ease-in-out infinite;
   }
 
   @keyframes public-pulse {
     0%, 100% { text-shadow: 0 0 14px rgba(255,220,30,0.7), 0 0 30px rgba(255,220,30,0.35); }
-    50% { text-shadow: 0 0 20px rgba(255,220,30,1), 0 0 50px rgba(255,220,30,0.5), 0 0 80px rgba(255,220,30,0.2); }
+    50%       { text-shadow: 0 0 20px rgba(255,220,30,1),   0 0 50px rgba(255,220,30,0.5); }
   }
 
-  /* ── BOTTOM TICKER ── */
-  .ticker {
-    height: 48px;
+  /* ── LOWER THIRD ── */
+  .lower-third {
+    flex-shrink: 0;
+    background: #000;
+    border-top: 2px solid #e02020;
+    box-shadow: 0 -4px 20px rgba(220,30,30,0.35);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Info blocks row */
+  .lt-blocks {
+    display: flex;
+    align-items: stretch;
+    height: 62px;
+    padding: 0 16px;
+    gap: 0;
+  }
+
+  .lt-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    padding: 0 14px;
+    min-width: 0;
+  }
+
+  .lt-block + .lt-block {
+    border-left: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .lt-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: #e02020;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .lt-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 2px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
+  }
+
+  /* Ticker row */
+  .lt-ticker {
+    height: 36px;
     background: #cc1a1a;
     display: flex;
     align-items: center;
     overflow: hidden;
     position: relative;
-    z-index: 10;
-    box-shadow: 0 -4px 16px rgba(0,0,0,0.5);
-    flex-shrink: 0;
   }
 
-  .ticker-tag {
-    flex-shrink: 0;
-    background: #111;
-    height: 100%;
+  .lt-ticker-inner {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 0 16px;
-    border-right: 2px solid rgba(255,255,255,0.2);
-    z-index: 2;
-    width: 360px;
-  }
-
-  .ticker-tag span {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    letter-spacing: 1.5px;
-    color: #ffffff;
-    font-weight: 900;
-    text-shadow: 0 0 8px rgba(255,255,255,0.4);
     white-space: nowrap;
+    animation: ticker-scroll 30s linear infinite;
   }
 
-  /* ── BOTTOM INFO AREA ── */
-  .info-area {
-    height: 100px;
-    background: #000;
-    border-top: 2px solid #e02020;
-    box-shadow: 0 -4px 20px rgba(220,30,30,0.3);
-    flex-shrink: 0;
-  }
-
-  .info-area .ia-block {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .info-area .ia-label {
-    font-size: 10px;
+  .lt-ticker-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
     letter-spacing: 4px;
-    color: rgba(220,30,30,0.9);
-    text-transform: uppercase;
-    font-weight: 700;
-  }
-
-  .info-area .ia-value {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    letter-spacing: 2px;
     color: #fff;
+    padding: 0 60px;
     white-space: nowrap;
   }
 
-  .info-area .ia-sep {
-    width: 1px;
-    height: 44px;
-    background: rgba(255,255,255,0.12);
-    flex-shrink: 0;
+  @keyframes ticker-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
   }
 </style>
 </head>
@@ -350,24 +289,16 @@
     <!-- LEFT -->
     <div class="left">
       <div class="brand">BASELINE<br>BAR <span class="amp">&amp;</span> GRILLE</div>
-      <div class="info-rows">
-        <div class="info-row" style="margin-top:2px; justify-content:center; width:100%;">
-          <div style="display:flex;align-items:center;gap:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:12px 22px 12px 16px;">
-            <span style="font-size:21px;letter-spacing:4px;color:#fff;text-transform:uppercase;font-weight:700;border-right:1px solid rgba(255,255,255,0.2);padding-right:16px;white-space:nowrap;">INSIDE</span>
-            <img src="uploads/Logo LevelUP.png" alt="LevelUp" style="height:42px;width:auto;object-fit:contain;">
-          </div>
-        </div>
+      <div class="inside-badge">
+        <span>INSIDE</span>
+        <img src="https://pickletester.github.io/test-ad/Logo%20LevelUP.png" alt="LevelUp">
       </div>
-
     </div>
 
     <!-- RIGHT -->
     <div class="right">
       <canvas id="frameCanvas"></canvas>
       <div class="ember"></div>
-
-
-      <!-- OPEN TO THE PUBLIC -->
       <div class="public-badge">
         <div class="public-inner">
           <div class="public-main">OPEN<br>TO THE<br><span class="accent">PUBLIC</span></div>
@@ -377,89 +308,152 @@
 
   </div>
 
-  <!-- BOTTOM INFO AREA -->
-  <div class="info-area"></div>
+  <!-- LOWER THIRD — driven by lower-third.json -->
+  <div class="lower-third">
+    <div class="lt-blocks" id="ltBlocks">
+      <!-- populated by JS -->
+    </div>
+    <div class="lt-ticker">
+      <div class="lt-ticker-inner" id="ltTicker">
+        <!-- populated by JS (doubled for seamless loop) -->
+      </div>
+    </div>
+  </div>
 
 </div>
 
 <script>
-  const BASE_URL    = 'https://pickletester.github.io/test-ad/Frames/';
-  const FRAME_COUNT = 145;
-  const FPS         = 18;
-  const INTERVAL_MS = 1000 / FPS;
+/* ═══════════════════════════════════════════
+   FRAME PLAYER
+═══════════════════════════════════════════ */
+const BASE_URL    = 'https://pickletester.github.io/test-ad/Frames/';
+const FRAME_COUNT = 145;
+const FPS         = 18;
+const INTERVAL_MS = 1000 / FPS;
 
-  const canvas = document.getElementById('frameCanvas');
-  const ctx    = canvas.getContext('2d');
+const canvas = document.getElementById('frameCanvas');
+const ctx    = canvas.getContext('2d');
 
-  function sizeCanvas() {
-    const w = canvas.offsetWidth;
-    const h = canvas.offsetHeight;
-    if (w > 0 && h > 0) {
-      canvas.width  = w;
-      canvas.height = h;
-    } else {
-      canvas.width  = 440;
-      canvas.height = 352;
-    }
+function sizeCanvas() {
+  const w = canvas.offsetWidth;
+  const h = canvas.offsetHeight;
+  canvas.width  = w > 0 ? w : 410;
+  canvas.height = h > 0 ? h : 300;
+}
+
+requestAnimationFrame(() => {
+  sizeCanvas();
+  window.addEventListener('resize', sizeCanvas);
+  startLoading();
+});
+
+function frameUrl(n) {
+  const num = String(n).padStart(3, '0');
+  return `${BASE_URL}Gen-4_5_-_burger_in_fire_gen-4_5_-_burger_in_fire__1__${num}.jpg`;
+}
+
+const frames = new Array(FRAME_COUNT).fill(null);
+let loaded = 0, loopStarted = false;
+
+function startLoopIfNeeded() {
+  if (!loopStarted && frames[0]) {
+    loopStarted = true;
+    requestAnimationFrame(tick);
   }
+}
 
-  requestAnimationFrame(() => {
-    sizeCanvas();
-    window.addEventListener('resize', sizeCanvas);
-    startLoading();
+function startLoading() {
+  for (let i = 0; i < FRAME_COUNT; i++) {
+    const img = new Image();
+    img.onload  = () => { frames[i] = img; loaded++; startLoopIfNeeded(); };
+    img.onerror = () => { loaded++; startLoopIfNeeded(); };
+    img.src = frameUrl(i + 1);
+  }
+}
+
+function drawFrame(img) {
+  if (!img) return;
+  const cw = canvas.width, ch = canvas.height;
+  const iw = img.naturalWidth  || 1;
+  const ih = img.naturalHeight || 1;
+  const scale = Math.max(cw / iw, ch / ih);
+  const dw = iw * scale, dh = ih * scale;
+  ctx.clearRect(0, 0, cw, ch);
+  ctx.drawImage(img, (cw - dw) / 2, (ch - dh) * 0.25, dw, dh);
+}
+
+let frameIdx = 0, lastTime = 0;
+
+function tick(ts) {
+  requestAnimationFrame(tick);
+  if (ts - lastTime < INTERVAL_MS) return;
+  lastTime = ts;
+  let safeIdx = frameIdx;
+  for (let i = 0; i < FRAME_COUNT; i++) {
+    const idx = (frameIdx + i) % FRAME_COUNT;
+    if (frames[idx]) { safeIdx = idx; break; }
+  }
+  drawFrame(frames[safeIdx]);
+  frameIdx = (safeIdx + 1) % FRAME_COUNT;
+}
+
+/* ═══════════════════════════════════════════
+   LOWER THIRD — live from lower-third.json
+═══════════════════════════════════════════ */
+const POLL_MS = 30000; // re-check every 30 seconds
+let lastJson  = '';
+
+async function fetchLowerThird() {
+  try {
+    const res = await fetch(`lower-third.json?v=${Date.now()}`, { cache: 'no-store' });
+    if (!res.ok) return;
+    const raw = await res.text();
+    if (raw === lastJson) return; // no change
+    lastJson = raw;
+    renderLowerThird(JSON.parse(raw));
+  } catch(e) {}
+}
+
+function renderLowerThird(data) {
+  // ── Info blocks ──
+  const blocksEl = document.getElementById('ltBlocks');
+  blocksEl.innerHTML = '';
+
+  // Support arbitrary blocks array OR legacy 3-block format
+  const blocks = data.blocks || [
+    { label: data.leftLabel,   value: data.leftValue   },
+    { label: data.centerLabel, value: data.centerValue },
+    { label: data.rightLabel,  value: data.rightValue  },
+  ].filter(b => b.label || b.value);
+
+  blocks.forEach(b => {
+    const div = document.createElement('div');
+    div.className = 'lt-block';
+    div.innerHTML = `
+      <div class="lt-label">${b.label || ''}</div>
+      <div class="lt-value">${b.value || ''}</div>
+    `;
+    blocksEl.appendChild(div);
   });
 
-  function frameUrl(n) {
-    const num = String(n).padStart(3, '0');
-    return `${BASE_URL}Gen-4_5_-_burger_in_fire_gen-4_5_-_burger_in_fire__1__${num}.jpg`;
-  }
+  // ── Ticker ──
+  const tickerEl = document.getElementById('ltTicker');
+  const text = data.ticker || '';
+  // Double the text for seamless infinite scroll
+  tickerEl.innerHTML = `
+    <span class="lt-ticker-text">${text}</span>
+    <span class="lt-ticker-text">${text}</span>
+  `;
+}
 
-  const frames = new Array(FRAME_COUNT).fill(null);
-  let loaded = 0, loopStarted = false;
+// Initial load + poll
+fetchLowerThird();
+setInterval(fetchLowerThird, POLL_MS);
 
-  function startLoopIfNeeded() {
-    if (!loopStarted && frames[0]) {
-      loopStarted = true;
-      requestAnimationFrame(tick);
-    }
-  }
-
-  function startLoading() {
-    for (let i = 0; i < FRAME_COUNT; i++) {
-      const img = new Image();
-      img.onload = () => { frames[i] = img; loaded++; startLoopIfNeeded(); };
-      img.onerror = () => { loaded++; startLoopIfNeeded(); };
-      img.src = frameUrl(i + 1);
-    }
-  }
-
-  function drawFrame(img) {
-    if (!img) return;
-    const cw = canvas.width, ch = canvas.height;
-    const iw = img.naturalWidth  || 1;
-    const ih = img.naturalHeight || 1;
-    const scale = Math.max(cw / iw, ch / ih);
-    const dw = iw * scale, dh = ih * scale;
-    const dx = (cw - dw) / 2;
-    const dy = (ch - dh) * 0.25;
-    ctx.clearRect(0, 0, cw, ch);
-    ctx.drawImage(img, dx, dy, dw, dh);
-  }
-
-  let frameIdx = 0, lastTime = 0;
-
-  function tick(ts) {
-    requestAnimationFrame(tick);
-    if (ts - lastTime < INTERVAL_MS) return;
-    lastTime = ts;
-    let safeIdx = frameIdx;
-    for (let i = 0; i < FRAME_COUNT; i++) {
-      const idx = (frameIdx + i) % FRAME_COUNT;
-      if (frames[idx]) { safeIdx = idx; break; }
-    }
-    drawFrame(frames[safeIdx]);
-    frameIdx = (safeIdx + 1) % FRAME_COUNT;
-  }
+// Refresh when tab becomes visible again (TV quirk)
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) fetchLowerThird();
+});
 </script>
 </body>
 </html>
